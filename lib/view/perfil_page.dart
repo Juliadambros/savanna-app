@@ -33,35 +33,31 @@ class PerfilPage extends StatelessWidget {
 
           return Padding(
             padding: const EdgeInsets.all(16),
-            child: Column(
+            child: ListView(
               children: [
                 const CircleAvatar(radius: 50, child: Icon(Icons.person, size: 50)),
                 const SizedBox(height: 16),
                 Text(user.nome, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
                 const SizedBox(height: 8),
                 Text(user.email),
+                const Divider(height: 32),
+                Row(children: [const Icon(Icons.school), const SizedBox(width: 8), Text('Curso: ${user.curso}')]),
+                const SizedBox(height: 8),
+                Row(children: [const Icon(Icons.phone), const SizedBox(width: 8), Text('Telefone: ${user.telefone}')]),
+                const SizedBox(height: 8),
+                Row(children: [const Icon(Icons.tag), const SizedBox(width: 8), Text('Apelido: ${user.apelidoCalouro}')]),
                 const SizedBox(height: 16),
                 Row(
                   children: [
-                    const Icon(Icons.school),
+                    const Icon(Icons.verified_user),
                     const SizedBox(width: 8),
-                    Text('Curso: ${user.curso}'),
-                  ],
-                ),
-                const SizedBox(height: 8),
-                Row(
-                  children: [
-                    const Icon(Icons.phone),
-                    const SizedBox(width: 8),
-                    Text('Telefone: ${user.telefone}'),
-                  ],
-                ),
-                const SizedBox(height: 8),
-                Row(
-                  children: [
-                    const Icon(Icons.tag),
-                    const SizedBox(width: 8),
-                    Text('Apelido: ${user.apelidoCalouro}'),
+                    Text(
+                      'Status: ${user.associado ? "Associado ✅" : "Não associado ❌"}',
+                      style: TextStyle(
+                        color: user.associado ? Colors.green : Colors.red,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                   ],
                 ),
               ],
@@ -72,4 +68,3 @@ class PerfilPage extends StatelessWidget {
     );
   }
 }
-

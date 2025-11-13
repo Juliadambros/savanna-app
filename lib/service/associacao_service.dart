@@ -1,44 +1,52 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import '../models/associacao_model.dart';
-import 'whatsapp_service.dart';
+import 'package:integrador/models/associacao_model.dart';
+import 'package:integrador/service/whatsapp_service.dart';
 
 class AssociacaoService {
-  final CollectionReference associacoes =
-      FirebaseFirestore.instance.collection("associacoes");
-
-  Future<void> salvarAssociacao(AssociacaoModel associacao) async {
-    await associacoes.doc(associacao.id).set(associacao.toMap());
-  }
+  final FirebaseFirestore _db = FirebaseFirestore.instance;
+  final String _colecao = 'associacoes';
 
   Future<List<AssociacaoModel>> listarAssociacoes() async {
-    final snapshot = await associacoes.get();
-    return snapshot.docs
-        .map((d) => AssociacaoModel.fromMap(d.data() as Map<String, dynamic>))
-        .toList();
+    final snap = await _db.collection(_colecao).get();
+    return snap.docs.map((d) {
+      final data = d.data();
+      data['id'] = d.id;
+      return AssociacaoModel.fromMap(data);
+    }).toList();
   }
 
-  Future<List<AssociacaoModel>> listarPorEmail(String email) async {
-    final snapshot =
-        await associacoes.where('email', isEqualTo: email).get();
-    return snapshot.docs
-        .map((d) => AssociacaoModel.fromMap(d.data() as Map<String, dynamic>))
-        .toList();
+  Future<void> salvarAssociacao(AssociacaoModel associacao) async {
+    final docRef = _db.collection(_colecao).doc(associacao.id);
+
+    await docRef.set(associacao.toMap(), SetOptions(merge: true));
+  }
+
+  Future<void> excluirAssociacao(String id) async {
+    await _db.collection(_colecao).doc(id).delete();
+  }
+
+  Future<void> atualizarStatus(String id, String novoStatus) async {
+    await _db.collection(_colecao).doc(id).update({'status': novoStatus});
   }
 
   Future<void> enviarParaWhatsApp(AssociacaoModel associacao) async {
-    const numeroDiretor = '55XXXXXXXXXXX'; 
+    if (associacao.telefone == null || associacao.telefone!.isEmpty) return;
 
-    final mensagem = '''
-📩 Nova ${associacao.tipo.toUpperCase()} recebida!
+    final mensagem =
+        '''
+Olá ${associacao.nomeCompleto} 👋
+Recebemos sua solicitação de associação!
 
-👤 Nome: ${associacao.nomeCompleto}
-📧 Email: ${associacao.email}
-🪪 CPF: ${associacao.cpf}
-🎓 RA: ${associacao.ra}
 📚 Curso: ${associacao.curso}
 💳 Pagamento: ${associacao.meioPagamento}
+🧾 Tipo: ${associacao.tipo}
+
+Status atual: ${associacao.status.toUpperCase()}
+
+Em breve entraremos em contato com mais informações.
+Obrigado por fazer parte da associação!
 ''';
 
-    await WhatsAppService.enviarMensagem(numeroDiretor, mensagem);
+    await WhatsAppService.enviarMensagem(associacao.telefone!, mensagem);
   }
 }

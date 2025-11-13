@@ -1,26 +1,38 @@
 import 'package:flutter/material.dart';
 
 class CampoTexto extends StatelessWidget {
-  final String label;
   final TextEditingController controller;
-  final bool senha;
+  final String label;
+  final TextInputType tipo;
+  final int? maxLines;
+  final bool senha; 
 
   const CampoTexto({
     super.key,
-    required this.label,
     required this.controller,
-    this.senha = false,
+    required this.label,
+    this.tipo = TextInputType.text,
+    this.maxLines = 1,
+    this.senha = false, 
   });
 
   @override
   Widget build(BuildContext context) {
-    return TextField(
-      controller: controller,
-      obscureText: senha,
-      decoration: InputDecoration(
-        labelText: label,
-        border: OutlineInputBorder(),
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: TextField(
+        controller: controller,
+        keyboardType: tipo,
+        maxLines: maxLines,
+        obscureText: senha, 
+        decoration: InputDecoration(
+          labelText: label,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+        ),
       ),
     );
   }
 }
+

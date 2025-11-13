@@ -1,39 +1,39 @@
 class EventoModel {
-  final String id;
-  final String titulo;
-  final String descricao;
-  final String data;
-  final String local;
-  final double preco;
-  final String tipo; 
+  String? id;
+  String nome;
+  String local;
+  DateTime data;
+  String tipo;
+  String descricao;
 
   EventoModel({
-    required this.id,
-    required this.titulo,
-    required this.descricao,
-    required this.data,
+    this.id,
+    required this.nome,
     required this.local,
-    required this.preco,
+    required this.data,
     required this.tipo,
+    required this.descricao,
   });
 
-  Map<String, dynamic> toMap() => {
-        'id': id,
-        'titulo': titulo,
-        'descricao': descricao,
-        'data': data,
-        'local': local,
-        'preco': preco,
-        'tipo': tipo,
-      };
+  Map<String, dynamic> toMap() {
+    return {
+      'nome': nome,
+      'local': local,
+      'data': data.toIso8601String(),
+      'tipo': tipo,
+      'descricao': descricao,
+    };
+  }
 
-  factory EventoModel.fromMap(Map<String, dynamic> map) => EventoModel(
-        id: map['id'],
-        titulo: map['titulo'],
-        descricao: map['descricao'],
-        data: map['data'],
-        local: map['local'],
-        preco: map['preco'],
-        tipo: map['tipo'],
-      );
+  factory EventoModel.fromMap(Map<String, dynamic> map, String id) {
+    return EventoModel(
+      id: id,
+      nome: map['nome'] ?? '',
+      local: map['local'] ?? '',
+      data: DateTime.parse(map['data']),
+      tipo: map['tipo'] ?? '',
+      descricao: map['descricao'] ?? '',
+    );
+  }
 }
+
