@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:integrador/service/auth_service.dart';
 import 'package:integrador/service/usuario_service.dart';
 import 'home_page.dart';
+import 'painel_admin_page.dart';
 import 'cadastro_page.dart';
 import 'components/campo_texto.dart';
+import 'escolha_tipo_usuario_page.dart';
 
 class LoginPage extends StatefulWidget {
-  final String tipo;
+  final String tipo; 
   const LoginPage({super.key, required this.tipo});
 
   @override
@@ -35,19 +37,20 @@ class _LoginPageState extends State<LoginPage> {
       );
 
       if (user != null) {
-        final usuarioService = UsuarioService();
-        final dados = await usuarioService.buscarUsuario(user.uid);
+        final dados = await UsuarioService().buscarUsuario(user.uid);
+        final isAdminLogin = widget.tipo.toLowerCase() == 'administrador';
+        final isAdminUser = dados?.tipoUsuario.toLowerCase() == 'adm';
 
-        if (dados != null && dados.tipoUsuario == 'administrador') {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (_) => const HomePage()),
-          );
+        if (isAdminLogin) {
+          if (isAdminUser) {
+            Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const PainelAdminPage()));
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Acesso negado: você não é administrador')),
+            );
+          }
         } else {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (_) => const HomePage()),
-          );
+          Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const HomePage()));
         }
       }
     } catch (e) {
@@ -61,9 +64,20 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
+    final isAdmin = widget.tipo.toLowerCase() == 'administrador';
+
     return Scaffold(
       appBar: AppBar(
-        title: Text('Login (${widget.tipo})'),
+        title: Text(isAdmin ? 'Login Administrador' : 'Login Usuário'),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (_) => const EscolhaTipoUsuarioPage()),
+            );
+          },
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16),
@@ -72,20 +86,39 @@ class _LoginPageState extends State<LoginPage> {
             CampoTexto(label: 'Email', controller: emailController),
             const SizedBox(height: 12),
             CampoTexto(label: 'Senha', controller: senhaController, senha: true),
+            const SizedBox(height: 8),
+            Align(
+              alignment: Alignment.centerRight,
+              child: TextButton(
+                onPressed: () {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Funcionalidade ainda não implementada')),
+                  );
+                },
+                child: const Text('Esqueceu sua senha?'),
+              ),
+            ),
             const SizedBox(height: 20),
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: carregando ? null : _entrar,
                 child: carregando
-                    ? const SizedBox(height: 16, width: 16, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
+                    ? const SizedBox(
+                        height: 16,
+                        width: 16,
+                        child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                      )
                     : const Text('Entrar'),
               ),
             ),
-            TextButton(
-              onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const CadastroPage())),
-              child: const Text('Criar conta'),
-            ),
+            if (!isAdmin) ...[
+              const SizedBox(height: 12),
+              TextButton(
+                onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const CadastroPage())),
+                child: const Text('Criar conta'),
+              ),
+            ],
           ],
         ),
       ),

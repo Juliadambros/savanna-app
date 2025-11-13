@@ -1,25 +1,30 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import '../models/produto_model.dart';
+import 'package:integrador/models/produto_model.dart';
+
 
 class ProdutoService {
-  final CollectionReference produtos =
-      FirebaseFirestore.instance.collection('produtos');
+  final _colecao = FirebaseFirestore.instance.collection('produtos');
 
-  Future<void> salvarProduto(ProdutoModel produto) async {
-    await produtos.doc(produto.id).set(produto.toMap());
+  Future<void> salvar(ProdutoModel produto) async {
+    if (produto.id != null) {
+      await _colecao.doc(produto.id).update(produto.toMap());
+    } else {
+      await _colecao.add(produto.toMap());
+    }
   }
 
-  Future<List<ProdutoModel>> listarProdutos() async {
-    final snapshot = await produtos.get();
+  Future<List<ProdutoModel>> listar() async {
+    final snapshot = await _colecao.get();
     return snapshot.docs
-        .map((d) => ProdutoModel.fromMap(d.data() as Map<String, dynamic>))
+        .map((doc) => ProdutoModel.fromMap(doc.data(), doc.id))
         .toList();
   }
 
-  Future<ProdutoModel?> buscarProduto(String id) async {
-    final doc = await produtos.doc(id).get();
-    if (!doc.exists) return null;
-    return ProdutoModel.fromMap(doc.data() as Map<String, dynamic>);
+  Future<void> deletar(String id) async {
+    await _colecao.doc(id).delete();
   }
 }
+
+
+
 

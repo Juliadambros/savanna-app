@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:integrador/service/auth_service.dart';
 import 'package:integrador/service/usuario_service.dart';
+import 'package:integrador/view/components/campo_dropdown.dart';
 import '../models/usuario_model.dart';
 import 'home_page.dart';
 import 'components/campo_texto.dart';
-import 'components/campo_dropdown.dart';
 
 class CadastroPage extends StatefulWidget {
   const CadastroPage({super.key});

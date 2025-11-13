@@ -1,59 +1,59 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:integrador/service/auth_service.dart';
-import 'package:integrador/service/usuario_service.dart';
-import 'package:integrador/view/painel_admin_page.dart';
-import 'produtos_page.dart';
-import 'eventos_page.dart';
-import 'associacoes_page.dart';
-import 'parceiros_page.dart';
-import 'perfil_page.dart';
-import 'sobre_page.dart';
-import 'diretoria_page.dart';
+import 'package:integrador/view/usuario/produtos_page.dart';
+import 'package:integrador/view/usuario/eventos_page.dart';
+import 'package:integrador/view/usuario/associacoes_page.dart';
+import 'package:integrador/view/usuario/parcerias_page.dart';
+import 'package:integrador/view/usuario/diretoria_page.dart';
+import 'package:integrador/view/perfil_page.dart';
+import 'package:integrador/view/usuario/sobre_page.dart';
+import 'package:integrador/view/login_page.dart';
 
-class HomePage extends StatefulWidget {
+class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
-  @override
-  State<HomePage> createState() => _HomePageState();
-}
-
-class _HomePageState extends State<HomePage> {
-  bool _carregandoTipo = true;
-  bool _isAdmin = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _verificarAdmin();
-  }
-
-  Future<void> _verificarAdmin() async {
-    setState(() => _carregandoTipo = true);
-    try {
-      final user = AuthService().usuarioAtual() ?? FirebaseAuth.instance.currentUser;
-      if (user == null) {
-        setState(() {
-          _isAdmin = false;
-        });
-        return;
-      }
-      final dados = await UsuarioService().buscarUsuario(user.uid);
-      final tipo = dados?.tipoUsuario?.toLowerCase() ?? '';
-      setState(() => _isAdmin = tipo == 'administrador' || tipo == 'adm' || tipo.startsWith('adm'));
-    } catch (e) {
-      setState(() => _isAdmin = false);
-    } finally {
-      setState(() => _carregandoTipo = false);
-    }
+  void _logout(BuildContext context) async {
+    await AuthService().sair();
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(builder: (_) => const LoginPage(tipo: 'usuario')),
+      (route) => false,
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    // menu simples com botões
     return Scaffold(
       appBar: AppBar(
         title: const Text('Home'),
+        actions: [
+          // Menu suspenso do perfil
+          PopupMenuButton<String>(
+            icon: const CircleAvatar(
+              child: Icon(Icons.person),
+            ),
+            onSelected: (value) {
+              if (value == 'perfil') {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const PerfilPage()),
+                );
+              } else if (value == 'logout') {
+                _logout(context);
+              }
+            },
+            itemBuilder: (context) => [
+              const PopupMenuItem(
+                value: 'perfil',
+                child: Text('Meu Perfil'),
+              ),
+              const PopupMenuItem(
+                value: 'logout',
+                child: Text('Sair'),
+              ),
+            ],
+          ),
+        ],
       ),
       body: ListView(
         padding: const EdgeInsets.all(16),
@@ -84,27 +84,9 @@ class _HomePageState extends State<HomePage> {
           ),
           const SizedBox(height: 8),
           ElevatedButton(
-            onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const PerfilPage())),
-            child: const Text('Perfil'),
-          ),
-          const SizedBox(height: 8),
-          ElevatedButton(
             onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const SobrePage())),
             child: const Text('Sobre nós'),
           ),
-
-          const SizedBox(height: 20),
-          // area do admin: aparece apenas se for administrador
-          if (_carregandoTipo) ...[
-            const Center(child: CircularProgressIndicator()),
-          ] else if (_isAdmin) ...[
-            ElevatedButton.icon(
-              onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const PainelAdminPage())),
-              icon: const Icon(Icons.admin_panel_settings),
-              label: const Text('Painel Administrativo'),
-              style: ElevatedButton.styleFrom(backgroundColor: Colors.red.shade700),
-            ),
-          ],
         ],
       ),
     );
