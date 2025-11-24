@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:integrador/service/auth_service.dart';
+import 'package:integrador/view/perfil_page.dart';
 import 'package:integrador/view/usuario/produtos_page.dart';
 import 'package:integrador/view/usuario/eventos_page.dart';
 import 'package:integrador/view/usuario/associacoes_page.dart';
 import 'package:integrador/view/usuario/parcerias_page.dart';
 import 'package:integrador/view/usuario/diretoria_page.dart';
-import 'package:integrador/view/perfil_page.dart';
 import 'package:integrador/view/usuario/sobre_page.dart';
 import 'package:integrador/view/login_page.dart';
+
+import '../components/botao_padrao.dart';
+import '../components/card_item.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -21,16 +24,48 @@ class HomePage extends StatelessWidget {
     );
   }
 
+  Shader _gradienteTitulo() {
+    return const LinearGradient(
+      colors: [Color(0xFF0E2877), Color(0xFFE96120)],
+      begin: Alignment.centerLeft,
+      end: Alignment.centerRight,
+    ).createShader(const Rect.fromLTWH(0, 0, 250, 70));
+  }
+
   @override
   Widget build(BuildContext context) {
+    List<Map<String, dynamic>> cardsFirebase = [
+      {
+        "titulo": "Promoção Savanna",
+        "descricao": "Aproveite 20% OFF nos produtos da atlética!",
+        "imagem": "assets/imgs/promocao.png"
+      },
+      {
+        "titulo": "Eventos da Semana",
+        "descricao": "Confira tudo o que vai rolar essa semana!",
+        "imagem": "assets/imgs/evento.png"
+      },
+    ];
+
     return Scaffold(
+      backgroundColor: const Color(0xfff2f2f7),
+
       appBar: AppBar(
-        title: const Text('Home'),
+        backgroundColor: const Color(0xfff2f2f7),
+        elevation: 0,
+        title: Text(
+          "Home",
+          style: TextStyle(
+            fontSize: 28,
+            fontWeight: FontWeight.bold,
+            foreground: Paint()..shader = _gradienteTitulo(),
+          ),
+        ),
         actions: [
-          // Menu suspenso do perfil
           PopupMenuButton<String>(
             icon: const CircleAvatar(
-              child: Icon(Icons.person),
+              backgroundColor: Color(0xFF0E2877),
+              child: Icon(Icons.person, color: Colors.white),
             ),
             onSelected: (value) {
               if (value == 'perfil') {
@@ -42,12 +77,12 @@ class HomePage extends StatelessWidget {
                 _logout(context);
               }
             },
-            itemBuilder: (context) => [
-              const PopupMenuItem(
+            itemBuilder: (context) => const [
+              PopupMenuItem(
                 value: 'perfil',
                 child: Text('Meu Perfil'),
               ),
-              const PopupMenuItem(
+              PopupMenuItem(
                 value: 'logout',
                 child: Text('Sair'),
               ),
@@ -55,37 +90,105 @@ class HomePage extends StatelessWidget {
           ),
         ],
       ),
-      body: ListView(
-        padding: const EdgeInsets.all(16),
+
+      body: Stack(
         children: [
-          ElevatedButton(
-            onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ProdutosPage())),
-            child: const Text('Produtos'),
+          Positioned(
+            bottom: -100,
+            left: -100,
+            child: Image.asset(
+              "assets/imgs/mascote.png",
+              width: 400,
+             
+            ),
           ),
-          const SizedBox(height: 8),
-          ElevatedButton(
-            onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const EventosPage())),
-            child: const Text('Eventos'),
-          ),
-          const SizedBox(height: 8),
-          ElevatedButton(
-            onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const AssociacoesPage())),
-            child: const Text('Associações'),
-          ),
-          const SizedBox(height: 8),
-          ElevatedButton(
-            onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ParceriasPage())),
-            child: const Text('Parceiros'),
-          ),
-          const SizedBox(height: 8),
-          ElevatedButton(
-            onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const DiretoriaPage())),
-            child: const Text('Diretoria'),
-          ),
-          const SizedBox(height: 8),
-          ElevatedButton(
-            onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const SobrePage())),
-            child: const Text('Sobre nós'),
+
+          Padding(
+            padding: const EdgeInsets.all(20),
+            child: ListView(
+              children: [
+                GridView.count(
+                  shrinkWrap: true,
+                  crossAxisCount: 2,
+                  childAspectRatio: 4,
+                  crossAxisSpacing: 12,
+                  mainAxisSpacing: 12,
+                  physics: const NeverScrollableScrollPhysics(),
+                  children: [
+                    BotaoPadrao(
+                      texto: "Produtos",
+                      onPressed: () => Navigator.push(context,
+                        MaterialPageRoute(builder: (_) => const ProdutosPage())),
+                      cor: const Color(0xffE96120),
+                      transparencia: 0.80,
+                      altura: 25,
+                    ),
+                    BotaoPadrao(
+                      texto: "Eventos",
+                      onPressed: () => Navigator.push(context,
+                        MaterialPageRoute(builder: (_) => const EventosPage())),
+                      cor: const Color(0xffE96120),
+                      transparencia: 0.85,
+                      altura: 25,
+                    ),
+                    BotaoPadrao(
+                      texto: "Associações",
+                      onPressed: () => Navigator.push(context,
+                        MaterialPageRoute(builder: (_) => const AssociacoesPage())),
+                      cor: const Color(0xffE96120),
+                      transparencia: 0.85,
+                      altura: 25,
+                    ),
+                    BotaoPadrao(
+                      texto: "Parceiros",
+                      onPressed: () => Navigator.push(context,
+                        MaterialPageRoute(builder: (_) => const ParceriasPage())),
+                      cor: const Color(0xffE96120),
+                      transparencia: 0.85,
+                      altura: 25,
+                    ),
+                    BotaoPadrao(
+                      texto: "Diretoria",
+                      onPressed: () => Navigator.push(context,
+                        MaterialPageRoute(builder: (_) => const DiretoriaPage())),
+                      cor: const Color(0xffE96120),
+                      transparencia: 0.85,
+                    ),
+                    BotaoPadrao(
+                      texto: "Sobre nós",
+                      onPressed: () => Navigator.push(context,
+                        MaterialPageRoute(builder: (_) => const SobrePage())),
+                      cor: const Color(0xffE96120),
+                      transparencia: 0.85,
+                    ),
+                  ],
+                ),
+
+                const SizedBox(height: 20),
+
+                /// --------------------------
+                /// 🔥 CARDS VINDOS DO FIREBASE
+                /// --------------------------
+                Text(
+                  "Eventos & Promoções",
+                  style: TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                    foreground: Paint()..shader = _gradienteTitulo(),
+                  ),
+                ),
+
+                const SizedBox(height: 12),
+
+                for (var item in cardsFirebase)
+                  CardItem(
+                    titulo: item["titulo"],
+                    descricao: item["descricao"],
+                    imagem: item["imagem"],
+                    onTap: () {},
+                  ),
+              ],
+            ),
           ),
         ],
       ),

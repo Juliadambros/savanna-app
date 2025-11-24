@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:integrador/models/usuario_model.dart';
 import 'package:integrador/service/usuario_service.dart';
-import 'package:integrador/view/components/campo_dropdown.dart';
-import 'package:integrador/view/components/campo_texto.dart';
+import 'package:integrador/components/campo_dropdown.dart';
+import 'package:integrador/components/campo_texto.dart';
 
 
 class UsuarioFormPage extends StatefulWidget {

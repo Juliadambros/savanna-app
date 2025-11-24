@@ -4,11 +4,12 @@ import 'package:integrador/service/usuario_service.dart';
 import 'home_page.dart';
 import 'painel_admin_page.dart';
 import 'cadastro_page.dart';
-import 'components/campo_texto.dart';
+import '../components/campo_texto.dart';
+import '../components/botao_padrao.dart';
 import 'escolha_tipo_usuario_page.dart';
 
 class LoginPage extends StatefulWidget {
-  final String tipo; 
+  final String tipo;
   const LoginPage({super.key, required this.tipo});
 
   @override
@@ -43,20 +44,28 @@ class _LoginPageState extends State<LoginPage> {
 
         if (isAdminLogin) {
           if (isAdminUser) {
-            Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const PainelAdminPage()));
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (_) => const PainelAdminPage()),
+            );
           } else {
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Acesso negado: você não é administrador')),
+              const SnackBar(
+                content: Text('Acesso negado: você não é administrador'),
+              ),
             );
           }
         } else {
-          Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => const HomePage()));
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (_) => const HomePage()),
+          );
         }
       }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Erro ao entrar: $e')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Erro ao entrar: $e')));
     } finally {
       setState(() => carregando = false);
     }
@@ -67,7 +76,9 @@ class _LoginPageState extends State<LoginPage> {
     final isAdmin = widget.tipo.toLowerCase() == 'administrador';
 
     return Scaffold(
+      backgroundColor: const Color(0xfff2f2f7),
       appBar: AppBar(
+        backgroundColor: const Color(0xfff2f2f7),
         title: Text(isAdmin ? 'Login Administrador' : 'Login Usuário'),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
@@ -79,48 +90,90 @@ class _LoginPageState extends State<LoginPage> {
           },
         ),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          children: [
-            CampoTexto(label: 'Email', controller: emailController),
-            const SizedBox(height: 12),
-            CampoTexto(label: 'Senha', controller: senhaController, senha: true),
-            const SizedBox(height: 8),
-            Align(
-              alignment: Alignment.centerRight,
-              child: TextButton(
-                onPressed: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Funcionalidade ainda não implementada')),
-                  );
-                },
-                child: const Text('Esqueceu sua senha?'),
-              ),
+      body: Stack(
+        children: [
+          Positioned(
+            left: 0,
+            bottom: 0,
+            child: Image.asset("assets/imgs/mascote.png", fit: BoxFit.contain),
+          ),
+
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Column(
+              children: [
+                const SizedBox(height: 60),
+
+                Image.asset("assets/imgs/logo.png"),
+                const SizedBox(height: 50),
+
+                CampoTexto(label: 'Email', controller: emailController),
+                const SizedBox(height: 10),
+
+                CampoTexto(
+                  controller: senhaController,
+                  label: "Senha",
+                  senha: true,
+                  emojiFinal: const Icon(
+                    Icons.lock_outline,
+                    color: Color(0xFF0E2877),
+                  ),
+                ),
+
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: TextButton(
+                    onPressed: () {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text(
+                            'Funcionalidade ainda não implementada',
+                          ),
+                        ),
+                      );
+                    },
+                    child: const Text(
+                      'Esqueceu sua senha?',
+                      style: TextStyle(color: Color(0xFF0E2877)),
+                    ),
+                  ),
+                ),
+
+                const SizedBox(height: 20),
+
+                BotaoPadrao(
+                  texto: carregando ? "Entrando..." : "Entrar",
+                  onPressed: carregando ? () {} : _entrar,
+                  cor: const Color(0xffE96120),
+                  transparencia: 0.8,
+                  tamanhoFonte: 12,
+                  altura: 40,
+                  largura: 200,
+                  raioBorda: 20,
+                ),
+
+                if (!isAdmin) ...[
+                  const SizedBox(height: 16),
+                  BotaoPadrao(
+                    texto: carregando ? "Criando conta..." : "Criar conta",
+                    onPressed: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const CadastroPage()),
+                    ),
+                    cor: const Color(0xffE96120),
+                    transparencia: 0.8,
+                    tamanhoFonte: 12,
+                    altura: 40,
+                    largura: 200,
+                    raioBorda: 20,
+                  ),
+                ],
+
+                const Spacer(), // empurra o fundo sem criar espaço lá em cima
+              ],
             ),
-            const SizedBox(height: 20),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: carregando ? null : _entrar,
-                child: carregando
-                    ? const SizedBox(
-                        height: 16,
-                        width: 16,
-                        child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
-                      )
-                    : const Text('Entrar'),
-              ),
-            ),
-            if (!isAdmin) ...[
-              const SizedBox(height: 12),
-              TextButton(
-                onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const CadastroPage())),
-                child: const Text('Criar conta'),
-              ),
-            ],
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
