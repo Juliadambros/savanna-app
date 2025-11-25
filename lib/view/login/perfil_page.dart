@@ -56,7 +56,6 @@ class PerfilPage extends StatelessWidget {
                     children: [
                       const SizedBox(height: 10),
 
-                      // ---- Avatar ----
                       const CircleAvatar(
                         radius: 55,
                         child: Icon(Icons.person, size: 60),
@@ -64,21 +63,16 @@ class PerfilPage extends StatelessWidget {
 
                       const SizedBox(height: 20),
 
-                      // ---------- CARD DO NOME ----------
                       _infoCard(user.nome),
 
-                      // ---------- CARD DO NASCIMENTO ----------
                       _infoCard("Data de Nascimento: ${user.dataNascimento ?? '---'}"),
 
-                      // ---------- CARD DO EMAIL ----------
                       _infoCard(user.email),
 
-                      // ---------- CARD DO APELIDO ----------
                       _infoCard("Apelido: ${user.apelidoCalouro}"),
 
                       const SizedBox(height: 20),
 
-                      // ---------- STATUS ----------
                       Text(
                         user.associado ? "Associado ✔️" : "Não Associado ❌",
                         style: TextStyle(
@@ -90,7 +84,6 @@ class PerfilPage extends StatelessWidget {
 
                       const SizedBox(height: 30),
 
-                      // ---- Botão editar ----
                       ElevatedButton(
                         onPressed: () {},
                         style: ElevatedButton.styleFrom(

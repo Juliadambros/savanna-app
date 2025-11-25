@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:integrador/models/produto_model.dart';
 import 'package:integrador/service/produto_service.dart';
-import 'package:integrador/components/card_item.dart'; // ⬅ IMPORTANTE
+import 'package:integrador/components/card_item.dart';
 
 class ProdutosPage extends StatefulWidget {
   const ProdutosPage({super.key});
@@ -28,7 +28,6 @@ class _ProdutosPageState extends State<ProdutosPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // APPBAR APENAS PARA BOTÃO VOLTAR
       appBar: AppBar(
         elevation: 0,
         backgroundColor: Colors.transparent,
@@ -37,7 +36,6 @@ class _ProdutosPageState extends State<ProdutosPage> {
 
       body: Stack(
         children: [
-          // ---------- MASCOTE NO FUNDO ----------
           Positioned.fill(
             child: Opacity(
               opacity: 0.30,
