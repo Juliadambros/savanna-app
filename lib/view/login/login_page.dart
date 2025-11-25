@@ -21,54 +21,53 @@ class _LoginPageState extends State<LoginPage> {
   final senhaController = TextEditingController();
   bool carregando = false;
 
-  @override
-  void dispose() {
-    emailController.dispose();
-    senhaController.dispose();
-    super.dispose();
-  }
-
   Future<void> _entrar() async {
     setState(() => carregando = true);
-    try {
-      final auth = AuthService();
-      final user = await auth.entrar(
-        emailController.text.trim(),
-        senhaController.text.trim(),
+
+    final auth = AuthService();
+    final (user, erro) = await auth.entrar(
+      emailController.text.trim(),
+      senhaController.text.trim(),
+    );
+
+    if (erro != null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(erro)),
       );
-
-      if (user != null) {
-        final dados = await UsuarioService().buscarUsuario(user.uid);
-        final isAdminLogin = widget.tipo.toLowerCase() == 'administrador';
-        final isAdminUser = dados?.tipoUsuario.toLowerCase() == 'adm';
-
-        if (isAdminLogin) {
-          if (isAdminUser) {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (_) => const PainelAdminPage()),
-            );
-          } else {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('Acesso negado: você não é administrador'),
-              ),
-            );
-          }
-        } else {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (_) => const HomePage()),
-          );
-        }
-      }
-    } catch (e) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Erro ao entrar: $e')));
-    } finally {
       setState(() => carregando = false);
+      return;
     }
+
+    if (user == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Erro inesperado ao entrar.")),
+      );
+      setState(() => carregando = false);
+      return;
+    }
+
+    final dados = await UsuarioService().buscarUsuario(user.uid);
+    final isAdminLogin = widget.tipo.toLowerCase() == 'administrador';
+    final isAdminUser = dados?.tipoUsuario.toLowerCase() == 'adm';
+
+    if (isAdminLogin && !isAdminUser) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Acesso negado: você não é administrador.')),
+      );
+      setState(() => carregando = false);
+      return;
+    }
+
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (_) => isAdminLogin
+            ? const PainelAdminPage()
+            : const HomePage(),
+      ),
+    );
+
+    setState(() => carregando = false);
   }
 
   @override
@@ -126,9 +125,7 @@ class _LoginPageState extends State<LoginPage> {
                     onPressed: () {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
-                          content: Text(
-                            'Funcionalidade ainda não implementada',
-                          ),
+                          content: Text('Funcionalidade ainda não implementada'),
                         ),
                       );
                     },
@@ -155,7 +152,7 @@ class _LoginPageState extends State<LoginPage> {
                 if (!isAdmin) ...[
                   const SizedBox(height: 16),
                   BotaoPadrao(
-                    texto: carregando ? "Criando conta..." : "Criar conta",
+                    texto: "Criar conta",
                     onPressed: () => Navigator.push(
                       context,
                       MaterialPageRoute(builder: (_) => const CadastroPage()),
@@ -169,7 +166,7 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                 ],
 
-                const Spacer(), // empurra o fundo sem criar espaço lá em cima
+                const Spacer(),
               ],
             ),
           ),

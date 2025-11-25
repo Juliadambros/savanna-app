@@ -25,18 +25,14 @@ class _CadastroPageState extends State<CadastroPage> {
   String? curso;
   bool carregando = false;
 
-  final cursos = ['Ciência da Computação', 'Química', 'Física', 'Matemática Licenciatura', "Big Data", "Matematica Computacional"];
-
-  @override
-  void dispose() {
-    nome.dispose();
-    email.dispose();
-    senha.dispose();
-    data.dispose();
-    telefone.dispose();
-    apelido.dispose();
-    super.dispose();
-  }
+  final cursos = [
+    'Ciência da Computação',
+    'Química',
+    'Física',
+    'Matemática Licenciatura',
+    "Big Data",
+    "Matematica Computacional"
+  ];
 
   Future<void> _cadastrar() async {
     if (nome.text.isEmpty || email.text.isEmpty || senha.text.isEmpty) {
@@ -47,39 +43,48 @@ class _CadastroPageState extends State<CadastroPage> {
     }
 
     setState(() => carregando = true);
-    try {
-      final auth = AuthService();
-      final firebaseUser = await auth.cadastrar(
-        email.text.trim(),
-        senha.text.trim(),
+
+    final auth = AuthService();
+    final (user, erro) = await auth.cadastrar(
+      email.text.trim(),
+      senha.text.trim(),
+    );
+
+    if (erro != null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(erro)),
       );
-
-      if (firebaseUser != null) {
-        final usuario = UsuarioModel(
-          uid: firebaseUser.uid,
-          nome: nome.text.trim(),
-          email: email.text.trim(),
-          dataNascimento: data.text.trim(),
-          telefone: telefone.text.trim(),
-          apelidoCalouro: apelido.text.trim(),
-          curso: curso ?? '',
-          tipoUsuario: 'usuario',
-        );
-
-        await UsuarioService().salvarUsuario(usuario);
-
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (_) => const HomePage()),
-        );
-      }
-    } catch (e) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Erro ao cadastrar: $e')));
-    } finally {
       setState(() => carregando = false);
+      return;
     }
+
+    if (user == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Erro inesperado ao criar usuário.")),
+      );
+      setState(() => carregando = false);
+      return;
+    }
+
+    final usuario = UsuarioModel(
+      uid: user.uid,
+      nome: nome.text.trim(),
+      email: email.text.trim(),
+      dataNascimento: data.text.trim(),
+      telefone: telefone.text.trim(),
+      apelidoCalouro: apelido.text.trim(),
+      curso: curso ?? '',
+      tipoUsuario: 'usuario',
+    );
+
+    await UsuarioService().salvarUsuario(usuario);
+
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (_) => const HomePage()),
+    );
+
+    setState(() => carregando = false);
   }
 
   @override
@@ -89,7 +94,6 @@ class _CadastroPageState extends State<CadastroPage> {
       appBar: AppBar(
         backgroundColor: const Color(0xfff2f2f7),
         title: const Text('Cadastro'),
-        // mesmo padrão da LoginPage: seta de voltar
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
@@ -124,19 +128,13 @@ class _CadastroPageState extends State<CadastroPage> {
                       fontSize: 26,
                       fontWeight: FontWeight.bold,
                       foreground: Paint()
-                        ..shader =
-                            const LinearGradient(
-                              colors: [Color(0xFF0E2877), Color(0xFFE96120)],
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                            ).createShader(
-                              Rect.fromLTWH(
-                                0,
-                                0,
-                                400,
-                                70,
-                              ), 
-                            ),
+                        ..shader = const LinearGradient(
+                          colors: [Color(0xFF0E2877), Color(0xFFE96120)],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ).createShader(
+                          Rect.fromLTWH(0, 0, 400, 70),
+                        ),
                     ),
                     textAlign: TextAlign.center,
                   ),
@@ -145,14 +143,19 @@ class _CadastroPageState extends State<CadastroPage> {
 
                   CampoTexto(label: 'Nome', controller: nome),
                   const SizedBox(height: 12),
+
                   CampoTexto(label: 'Email', controller: email),
                   const SizedBox(height: 12),
+
                   CampoTexto(label: 'Senha', controller: senha, senha: true),
                   const SizedBox(height: 12),
+
                   CampoTexto(label: 'Data de nascimento', controller: data),
                   const SizedBox(height: 12),
+
                   CampoTexto(label: 'Telefone', controller: telefone),
                   const SizedBox(height: 12),
+
                   CampoTexto(label: 'Apelido de calouro', controller: apelido),
                   const SizedBox(height: 12),
 
@@ -186,3 +189,4 @@ class _CadastroPageState extends State<CadastroPage> {
     );
   }
 }
+

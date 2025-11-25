@@ -31,7 +31,6 @@ class _SobrePageState extends State<SobrePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // APPBAR PADRÃO
       appBar: AppBar(
         elevation: 0,
         backgroundColor: Colors.transparent,
@@ -40,7 +39,6 @@ class _SobrePageState extends State<SobrePage> {
 
       body: Stack(
         children: [
-          // ---------- MASCOTE NO FUNDO ----------
           Positioned.fill(
             child: Opacity(
               opacity: 0.15,
@@ -69,8 +67,6 @@ class _SobrePageState extends State<SobrePage> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   const SizedBox(height: 10),
-
-                  // ---------- LOGO NO TOPO ----------
                   Center(
                     child: Image.asset(
                       'assets/imgs/logo.png',
@@ -80,7 +76,6 @@ class _SobrePageState extends State<SobrePage> {
 
                   const SizedBox(height: 30),
 
-                  // ---------- CONTEÚDO CENTRALIZADO ----------
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: _paginas.map((p) {

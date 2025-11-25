@@ -28,7 +28,6 @@ class _EventosPageState extends State<EventosPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // APPBAR APENAS PARA VOLTAR
       appBar: AppBar(
         elevation: 0,
         backgroundColor: Colors.transparent,
@@ -37,7 +36,6 @@ class _EventosPageState extends State<EventosPage> {
 
       body: Stack(
         children: [
-          /// ----------------- MASCOTE NO FUNDO -----------------
           Positioned.fill(
             child: Opacity(
               opacity: 0.12,
