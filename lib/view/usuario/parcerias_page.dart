@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:integrador/models/parceiro_model.dart';
 import 'package:integrador/service/parceiro_service.dart';
+import 'package:integrador/components/card_item.dart';
 
 class ParceriasPage extends StatefulWidget {
   const ParceriasPage({super.key});
@@ -27,23 +28,71 @@ class _ParceriasPageState extends State<ParceriasPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Parcerias')),
-      body: parceiros.isEmpty
-          ? const Center(child: Text('Nenhuma parceria cadastrada.'))
-          : ListView.builder(
-              itemCount: parceiros.length,
-              itemBuilder: (context, index) {
-                final p = parceiros[index];
-                return Card(
-                  margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                  child: ListTile(
-                    title: Text(p.nome),
-                    subtitle: Text('${p.descricao}\nContato: ${p.contato}'),
-                  ),
-                );
-              },
+      // APPBAR APENAS PARA VOLTAR
+      appBar: AppBar(
+        elevation: 0,
+        backgroundColor: Colors.transparent,
+        foregroundColor: Colors.black,
+      ),
+
+      body: Stack(
+        children: [
+          // ---------- MASCOTE NO FUNDO ----------
+          Positioned.fill(
+            child: Opacity(
+              opacity: 0.30,
+              child: Image.asset(
+                'assets/imgs/mascote.png',
+                fit: BoxFit.cover,
+              ),
             ),
+          ),
+
+          Column(
+            children: [
+              const Padding(
+                padding: EdgeInsets.only(top: 5, bottom: 20),
+                child: Text(
+                  "Parcerias",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+                ),
+              ),
+
+              Expanded(
+                child: parceiros.isEmpty
+                    ? const Center(
+                        child: Text(
+                          'Nenhuma parceria cadastrada.',
+                          style: TextStyle(fontSize: 16),
+                        ),
+                      )
+                    : ListView.builder(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        itemCount: parceiros.length,
+                        itemBuilder: (context, index) {
+                          final p = parceiros[index];
+
+                          return Padding(
+                            padding: const EdgeInsets.only(bottom: 10),
+                            child: CardItem(
+                              titulo: p.nome,
+                              descricao:
+                                  "${p.descricao}\nContato: ${p.contato}",
+                              imagem: "assets/imgs/img3.png",
+                              opacidade: 0.70,
+                              corFundo: index % 2 == 0
+                                  ? const Color(0xFF0E2877)
+                                  : const Color(0xFFE96120),
+                            ),
+                          );
+                        },
+                      ),
+              )
+            ],
+          ),
+        ],
+      ),
     );
   }
 }
-

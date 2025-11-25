@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:integrador/service/auth_service.dart';
 import 'package:integrador/service/usuario_service.dart';
 import 'package:integrador/components/campo_dropdown.dart';
-import '../models/usuario_model.dart';
+import '../../models/usuario_model.dart';
 import 'home_page.dart';
-import '../components/campo_texto.dart';
+import '../../components/campo_texto.dart';
 import 'escolha_tipo_usuario_page.dart';
-import '../components/botao_padrao.dart';
+import '../../components/botao_padrao.dart';
 
 class CadastroPage extends StatefulWidget {
   const CadastroPage({super.key});

@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:integrador/service/auth_service.dart';
 import 'package:integrador/service/usuario_service.dart';
 import 'home_page.dart';
-import 'painel_admin_page.dart';
+import '../admin/painel_admin_page.dart';
 import 'cadastro_page.dart';
-import '../components/campo_texto.dart';
-import '../components/botao_padrao.dart';
+import '../../components/campo_texto.dart';
+import '../../components/botao_padrao.dart';
 import 'escolha_tipo_usuario_page.dart';
 
 class LoginPage extends StatefulWidget {
