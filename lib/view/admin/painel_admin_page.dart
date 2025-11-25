@@ -7,7 +7,7 @@ import 'package:integrador/view/admin/parcerias/adm_parcerias.dart';
 import 'package:integrador/view/admin/produto/adm_produtos.dart';
 import 'package:integrador/view/admin/usuario/adm_usuario.dart';
 import 'package:integrador/view/admin/sobre_nos/adm_sobre_nos.dart';
-import 'package:integrador/view/login_page.dart';
+import 'package:integrador/view/login/login_page.dart';
 
 class PainelAdminPage extends StatelessWidget {
   const PainelAdminPage({super.key});

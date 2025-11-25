@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:integrador/service/auth_service.dart';
-import 'package:integrador/view/perfil_page.dart';
+import 'package:integrador/view/login/perfil_page.dart';
 import 'package:integrador/view/usuario/produtos_page.dart';
 import 'package:integrador/view/usuario/eventos_page.dart';
 import 'package:integrador/view/usuario/associacoes_page.dart';
 import 'package:integrador/view/usuario/parcerias_page.dart';
 import 'package:integrador/view/usuario/diretoria_page.dart';
 import 'package:integrador/view/usuario/sobre_page.dart';
-import 'package:integrador/view/login_page.dart';
+import 'package:integrador/view/login/login_page.dart';
 
-import '../components/botao_padrao.dart';
-import '../components/card_item.dart';
+import '../../components/botao_padrao.dart';
+import '../../components/card_item.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -38,12 +38,12 @@ class HomePage extends StatelessWidget {
       {
         "titulo": "Promoção Savanna",
         "descricao": "Aproveite 20% OFF nos produtos da atlética!",
-        "imagem": "assets/imgs/promocao.png"
+        "imagem": "assets/imgs/img1.png",
       },
       {
         "titulo": "Eventos da Semana",
         "descricao": "Confira tudo o que vai rolar essa semana!",
-        "imagem": "assets/imgs/evento.png"
+        "imagem": "assets/imgs/img2.png",
       },
     ];
 
@@ -78,14 +78,8 @@ class HomePage extends StatelessWidget {
               }
             },
             itemBuilder: (context) => const [
-              PopupMenuItem(
-                value: 'perfil',
-                child: Text('Meu Perfil'),
-              ),
-              PopupMenuItem(
-                value: 'logout',
-                child: Text('Sair'),
-              ),
+              PopupMenuItem(value: 'perfil', child: Text('Meu Perfil')),
+              PopupMenuItem(value: 'logout', child: Text('Sair')),
             ],
           ),
         ],
@@ -96,11 +90,7 @@ class HomePage extends StatelessWidget {
           Positioned(
             bottom: -100,
             left: -100,
-            child: Image.asset(
-              "assets/imgs/mascote.png",
-              width: 400,
-             
-            ),
+            child: Image.asset("assets/imgs/mascote.png", width: 400),
           ),
 
           Padding(
@@ -117,47 +107,65 @@ class HomePage extends StatelessWidget {
                   children: [
                     BotaoPadrao(
                       texto: "Produtos",
-                      onPressed: () => Navigator.push(context,
-                        MaterialPageRoute(builder: (_) => const ProdutosPage())),
+                      onPressed: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => const ProdutosPage()),
+                      ),
                       cor: const Color(0xffE96120),
                       transparencia: 0.80,
                       altura: 25,
                     ),
                     BotaoPadrao(
                       texto: "Eventos",
-                      onPressed: () => Navigator.push(context,
-                        MaterialPageRoute(builder: (_) => const EventosPage())),
+                      onPressed: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => const EventosPage()),
+                      ),
                       cor: const Color(0xffE96120),
                       transparencia: 0.85,
                       altura: 25,
                     ),
                     BotaoPadrao(
                       texto: "Associações",
-                      onPressed: () => Navigator.push(context,
-                        MaterialPageRoute(builder: (_) => const AssociacoesPage())),
+                      onPressed: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const AssociacoesPage(),
+                        ),
+                      ),
                       cor: const Color(0xffE96120),
                       transparencia: 0.85,
                       altura: 25,
                     ),
                     BotaoPadrao(
                       texto: "Parceiros",
-                      onPressed: () => Navigator.push(context,
-                        MaterialPageRoute(builder: (_) => const ParceriasPage())),
+                      onPressed: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const ParceriasPage(),
+                        ),
+                      ),
                       cor: const Color(0xffE96120),
                       transparencia: 0.85,
                       altura: 25,
                     ),
                     BotaoPadrao(
                       texto: "Diretoria",
-                      onPressed: () => Navigator.push(context,
-                        MaterialPageRoute(builder: (_) => const DiretoriaPage())),
+                      onPressed: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const DiretoriaPage(),
+                        ),
+                      ),
                       cor: const Color(0xffE96120),
                       transparencia: 0.85,
                     ),
                     BotaoPadrao(
                       texto: "Sobre nós",
-                      onPressed: () => Navigator.push(context,
-                        MaterialPageRoute(builder: (_) => const SobrePage())),
+                      onPressed: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => const SobrePage()),
+                      ),
                       cor: const Color(0xffE96120),
                       transparencia: 0.85,
                     ),
@@ -166,9 +174,6 @@ class HomePage extends StatelessWidget {
 
                 const SizedBox(height: 20),
 
-                /// --------------------------
-                /// 🔥 CARDS VINDOS DO FIREBASE
-                /// --------------------------
                 Text(
                   "Eventos & Promoções",
                   style: TextStyle(
@@ -180,11 +185,17 @@ class HomePage extends StatelessWidget {
 
                 const SizedBox(height: 12),
 
-                for (var item in cardsFirebase)
+                for (int i = 0; i < cardsFirebase.length; i++)
                   CardItem(
-                    titulo: item["titulo"],
-                    descricao: item["descricao"],
-                    imagem: item["imagem"],
+                    titulo: cardsFirebase[i]["titulo"],
+                    descricao: cardsFirebase[i]["descricao"],
+                    imagem: cardsFirebase[i]["imagem"],
+                    corFundo: i % 2 == 0
+                        ? const Color(0xFF0E2877)
+                        : const Color(0xFFE96120),
+
+                    opacidade: 0.70,
+
                     onTap: () {},
                   ),
               ],

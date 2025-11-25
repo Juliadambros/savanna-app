@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:integrador/models/produto_model.dart';
 import 'package:integrador/service/produto_service.dart';
+import 'package:integrador/components/card_item.dart'; // ⬅ IMPORTANTE
 
 class ProdutosPage extends StatefulWidget {
   const ProdutosPage({super.key});
@@ -27,24 +28,67 @@ class _ProdutosPageState extends State<ProdutosPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Produtos')),
-      body: produtos.isEmpty
-          ? const Center(child: Text('Nenhum produto disponível.'))
-          : ListView.builder(
-              itemCount: produtos.length,
-              itemBuilder: (context, index) {
-                final p = produtos[index];
-                return Card(
-                  margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                  child: ListTile(
-                    title: Text(p.nome),
-                    subtitle: Text(p.descricao),
-                    trailing:
-                        Text('R\$ ${p.preco.toStringAsFixed(2)}'),
-                  ),
-                );
-              },
+      // APPBAR APENAS PARA BOTÃO VOLTAR
+      appBar: AppBar(
+        elevation: 0,
+        backgroundColor: Colors.transparent,
+        foregroundColor: Colors.black,
+      ),
+
+      body: Stack(
+        children: [
+          // ---------- MASCOTE NO FUNDO ----------
+          Positioned.fill(
+            child: Opacity(
+              opacity: 0.30,
+              child: Image.asset('assets/imgs/mascote.png', fit: BoxFit.cover),
             ),
+          ),
+
+          Column(
+            children: [
+              const Padding(
+                padding: EdgeInsets.only(top: 5, bottom: 20),
+                child: Text(
+                  "Produtos",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+                ),
+              ),
+
+              Expanded(
+                child: produtos.isEmpty
+                    ? const Center(
+                        child: Text(
+                          'Nenhum produto disponível.',
+                          style: TextStyle(fontSize: 16),
+                        ),
+                      )
+                    : ListView.builder(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        itemCount: produtos.length,
+                        itemBuilder: (context, index) {
+                          final p = produtos[index];
+
+                          return Padding(
+                            padding: const EdgeInsets.only(bottom: 10.0),
+                            child: CardItem(
+                              titulo: p.nome,
+                              descricao: p.descricao,
+                              imagem: "assets/imgs/img3.png",
+                              opacidade: 0.70,
+                              corFundo: index % 2 == 0
+                                  ? const Color(0xFF0E2877)
+                                  : const Color(0xFFE96120),
+                            ),
+                          );
+                        },
+                      ),
+              ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 }

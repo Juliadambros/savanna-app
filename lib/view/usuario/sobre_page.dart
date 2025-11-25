@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:integrador/models/sobre_nos_model.dart';
 import 'package:integrador/service/sobre_nos_service.dart';
 
-
 class SobrePage extends StatefulWidget {
   const SobrePage({super.key});
 
@@ -32,38 +31,94 @@ class _SobrePageState extends State<SobrePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Sobre nós')),
-      body: _carregando
-          ? const Center(child: CircularProgressIndicator())
-          : _paginas.isEmpty
-              ? const Center(child: Text('Nenhuma informação disponível.'))
-              : SingleChildScrollView(
-                  padding: const EdgeInsets.all(16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: _paginas
-                        .map((p) => Padding(
-                              padding: const EdgeInsets.only(bottom: 20),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    p.titulo,
-                                    style: const TextStyle(
-                                        fontSize: 24,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                  const SizedBox(height: 8),
-                                  Text(
-                                    p.conteudo,
-                                    style: const TextStyle(fontSize: 16),
-                                  ),
-                                ],
-                              ),
-                            ))
-                        .toList(),
+      // APPBAR PADRÃO
+      appBar: AppBar(
+        elevation: 0,
+        backgroundColor: Colors.transparent,
+        foregroundColor: Colors.black,
+      ),
+
+      body: Stack(
+        children: [
+          // ---------- MASCOTE NO FUNDO ----------
+          Positioned.fill(
+            child: Opacity(
+              opacity: 0.15,
+              child: Image.asset(
+                'assets/imgs/mascote.png',
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
+
+          if (_carregando)
+            const Center(child: CircularProgressIndicator())
+
+          else if (_paginas.isEmpty)
+            const Center(
+              child: Text(
+                'Nenhuma informação disponível.',
+                style: TextStyle(fontSize: 16),
+              ),
+            )
+
+          else
+            SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  const SizedBox(height: 10),
+
+                  // ---------- LOGO NO TOPO ----------
+                  Center(
+                    child: Image.asset(
+                      'assets/imgs/logo.png',
+                      height: 110,
+                    ),
                   ),
-                ),
+
+                  const SizedBox(height: 30),
+
+                  // ---------- CONTEÚDO CENTRALIZADO ----------
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: _paginas.map((p) {
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 20),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Text(
+                              p.titulo,
+                              textAlign: TextAlign.center,
+                              style: const TextStyle(
+                                fontSize: 32,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const SizedBox(height: 10),
+                            Text(
+                              p.conteudo,
+                              textAlign: TextAlign.center,
+                              style: const TextStyle(
+                                fontSize: 16,
+                                height: 1.4,
+                                color: Colors.black87,
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    }).toList(),
+                  ),
+
+                  const SizedBox(height: 40),
+                ],
+              ),
+            ),
+        ],
+      ),
     );
   }
 }
