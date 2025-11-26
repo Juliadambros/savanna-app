@@ -27,7 +27,6 @@ class CampoDropdown extends StatelessWidget {
             color: Color(0xFF0E2877),
           ),
 
-          // Bordas iguais ao CampoTexto
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(20),
             borderSide: const BorderSide(

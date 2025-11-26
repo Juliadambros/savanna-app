@@ -34,12 +34,12 @@ class AssociacaoService {
 
     final mensagem =
         '''
-Olá ${associacao.nomeCompleto} 👋
+Olá ${associacao.nomeCompleto} 
 Recebemos sua solicitação de associação!
 
-📚 Curso: ${associacao.curso}
-💳 Pagamento: ${associacao.meioPagamento}
-🧾 Tipo: ${associacao.tipo}
+ Curso: ${associacao.curso}
+ Pagamento: ${associacao.meioPagamento}
+ Tipo: ${associacao.tipo}
 
 Status atual: ${associacao.status.toUpperCase()}
 

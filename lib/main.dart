@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:integrador/view/admin/painel_admin_page.dart';
 import 'package:integrador/view/login/escolha_tipo_usuario_page.dart';
 
 import 'firebase_options.dart';
@@ -18,7 +19,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Atlética',
       theme: ThemeData(primarySwatch: Colors.indigo),
-      home: EscolhaTipoUsuarioPage(),
+      home: PainelAdminPage(),
       //const EscolhaTipoUsuarioPage(),
       debugShowCheckedModeBanner: false,
     );

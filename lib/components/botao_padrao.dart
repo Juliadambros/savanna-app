@@ -3,10 +3,8 @@ import 'package:flutter/material.dart';
 class BotaoPadrao extends StatelessWidget {
   final String texto;
   final VoidCallback onPressed;
-
-  // Personalizações novas:
   final Color cor;
-  final double transparencia;        // de 0.0 a 1.0
+  final double transparencia;        
   final double tamanhoFonte;
   final double largura;
   final double altura;

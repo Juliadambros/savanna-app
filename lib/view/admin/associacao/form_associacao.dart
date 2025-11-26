@@ -66,17 +66,17 @@ class _FormAssociacaoState extends State<FormAssociacao> {
 
       const numeroAdm = '+55XXXXXXXXXX'; // substitir
       final mensagem = '''
-📋 *Nova Solicitação de Associação*
+ *Nova Solicitação de Associação*
 
-👤 Nome: ${novaAssociacao.nomeCompleto}
-📧 E-mail: ${novaAssociacao.email}
-🆔 CPF: ${novaAssociacao.cpf}
-🎓 RA: ${novaAssociacao.ra}
-📚 Curso: ${novaAssociacao.curso}
-💳 Pagamento: ${novaAssociacao.meioPagamento}
-📞 Telefone: ${novaAssociacao.telefone}
+ Nome: ${novaAssociacao.nomeCompleto}
+ E-mail: ${novaAssociacao.email}
+ CPF: ${novaAssociacao.cpf}
+ RA: ${novaAssociacao.ra}
+ Curso: ${novaAssociacao.curso}
+ Pagamento: ${novaAssociacao.meioPagamento}
+ Telefone: ${novaAssociacao.telefone}
 
-👉 Acesse o painel administrativo para aprovar ou recusar.
+ Acesse o painel administrativo para aprovar ou recusar.
 ''';
       await WhatsAppService.enviarMensagem(numeroAdm, mensagem);
 

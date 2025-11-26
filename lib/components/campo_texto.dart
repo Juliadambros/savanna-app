@@ -6,12 +6,12 @@ class CampoTexto extends StatelessWidget {
   final TextInputType tipo;
   final int? maxLines;
   final bool senha;
-
   final String? hint;               
   final Widget? emojiFinal;         
   final Color corBorda;             
   final Color corTexto;             
   final Color corLabel;             
+  final Function(String)? onChanged; 
 
   const CampoTexto({
     super.key,
@@ -25,6 +25,7 @@ class CampoTexto extends StatelessWidget {
     this.corBorda = const Color(0xFF0E2877), 
     this.corTexto = Colors.black,
     this.corLabel = const Color(0xFF0E2877),
+    this.onChanged, 
   });
 
   @override
@@ -37,6 +38,7 @@ class CampoTexto extends StatelessWidget {
         maxLines: senha ? 1 : maxLines,
         obscureText: senha,
         style: TextStyle(color: corTexto),
+        onChanged: onChanged, 
         decoration: InputDecoration(
           labelText: label,
           labelStyle: TextStyle(color: corLabel),

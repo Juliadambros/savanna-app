@@ -3,10 +3,8 @@ import 'package:flutter/material.dart';
 class CardItem extends StatelessWidget {
   final String titulo;
   final String descricao;
-  final String imagem; // Caminho da imagem
   final VoidCallback? onTap;
 
-  // 🔥 Novos parâmetros
   final Color corFundo;
   final double opacidade;
 
@@ -14,10 +12,9 @@ class CardItem extends StatelessWidget {
     super.key,
     required this.titulo,
     required this.descricao,
-    required this.imagem,
     this.onTap,
-    this.corFundo = Colors.white, 
-    this.opacidade = 1.0          
+    this.corFundo = Colors.white,
+    this.opacidade = 1.0,
   });
 
   @override
@@ -26,9 +23,9 @@ class CardItem extends StatelessWidget {
       onTap: onTap,
       child: Container(
         margin: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-        padding: const EdgeInsets.all(12),
+        padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: corFundo.withOpacity(opacidade),  
+          color: corFundo.withOpacity(opacidade),
           borderRadius: BorderRadius.circular(20),
           border: Border.all(color: Colors.black12),
           boxShadow: [
@@ -42,17 +39,6 @@ class CardItem extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(10),
-              child: Image.asset(
-                imagem,
-                height: 160,
-                width: double.infinity,
-                fit: BoxFit.cover,
-              ),
-            ),
-
-            const SizedBox(height: 12),
 
             Text(
               titulo,

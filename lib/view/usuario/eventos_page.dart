@@ -86,7 +86,7 @@ class _EventosPageState extends State<EventosPage> {
                               descricao:
                                   "${e.tipo} • ${e.local}\n${e.data.toLocal().toString().split(' ')[0]}",
 
-                              imagem: "assets/imgs/img2.png",
+                     
 
                               corFundo: corCard,
                               opacidade: 0.70,

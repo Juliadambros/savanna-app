@@ -62,37 +62,105 @@ class _AdmDiretoriaPageState extends State<AdmDiretoriaPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Gerenciar Diretoria')),
-      body: _carregando
-          ? const Center(child: CircularProgressIndicator())
-          : _erro != null
-              ? Center(child: Text(_erro!))
-              : _membros.isEmpty
-                  ? const Center(child: Text('Nenhum membro cadastrado.'))
-                  : ListView.builder(
-                      itemCount: _membros.length,
-                      itemBuilder: (context, i) {
-                        final m = _membros[i];
-                        return Card(
-                          margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                          child: ListTile(
-                            title: Text(m.nome),
-                            subtitle: Text('${m.cargo} • ${m.curso}'),
-                            trailing: IconButton(
-                              icon: const Icon(Icons.delete, color: Colors.red),
-                              onPressed: () => _remover(m),
-                            ),
-                            onTap: () => _abrirForm(diretor: m),
-                          ),
-                        );
-                      },
-                    ),
+      body: Stack(
+        children: [
+          Positioned(
+            bottom: 0,
+            left: 0,
+            child: Opacity(
+              opacity: 0.15,
+              child: Image.asset(
+                "assets/imgs/mascote.png",
+                width: 220,
+              ),
+            ),
+          ),
+          SafeArea(
+            child: Column(
+              children: [
+                const SizedBox(height: 8),
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: IconButton(
+                    icon: const Icon(Icons.arrow_back),
+                    iconSize: 28,
+                    onPressed: () => Navigator.pop(context),
+                  ),
+                ),
+                Center(
+                  child: Image.asset(
+                    "assets/imgs/logo.png",
+                    height: 70,
+                  ),
+                ),
+
+                const SizedBox(height: 10),
+                const Text(
+                  "Gerenciar Diretoria",
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+
+                const SizedBox(height: 10),
+                Expanded(
+                  child: _carregando
+                      ? const Center(child: CircularProgressIndicator())
+                      : _erro != null
+                          ? Center(child: Text(_erro!))
+                          : _membros.isEmpty
+                              ? const Center(
+                                  child: Text(
+                                    'Nenhum membro cadastrado.',
+                                    style: TextStyle(fontSize: 16),
+                                  ),
+                                )
+                              : ListView.builder(
+                                  padding: const EdgeInsets.all(16),
+                                  itemCount: _membros.length,
+                                  itemBuilder: (context, i) {
+                                    final m = _membros[i];
+
+                                    return Card(
+                                      elevation: 4,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(16),
+                                      ),
+                                      margin: const EdgeInsets.only(bottom: 16),
+                                      child: ListTile(
+                                        contentPadding: const EdgeInsets.all(16),
+                                        title: Text(
+                                          m.nome,
+                                          style: const TextStyle(
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        subtitle: Text(
+                                          "${m.cargo} • ${m.curso}",
+                                          style: const TextStyle(fontSize: 14),
+                                        ),
+                                        trailing: IconButton(
+                                          icon: const Icon(Icons.delete, color: Colors.red),
+                                          onPressed: () => _remover(m),
+                                        ),
+                                        onTap: () => _abrirForm(diretor: m),
+                                      ),
+                                    );
+                                  },
+                                ),
+                ),
+              ],
+            ),
+          )
+        ],
+      ),
       floatingActionButton: FloatingActionButton(
+        backgroundColor: const Color(0xFF0E2877),
+        child: const Icon(Icons.add, color: Colors.white),
         onPressed: () => _abrirForm(),
-        child: const Icon(Icons.add),
       ),
     );
   }
 }
-
-
