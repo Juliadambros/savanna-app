@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:integrador/models/usuario_model.dart';
-import 'package:integrador/service/usuario_service.dart';
+import 'package:integrador/components/botao_padrao.dart';
 import 'package:integrador/components/campo_dropdown.dart';
 import 'package:integrador/components/campo_texto.dart';
-
+import 'package:integrador/models/usuario_model.dart';
+import 'package:integrador/service/usuario_service.dart';
 
 class UsuarioFormPage extends StatefulWidget {
   final UsuarioModel? usuario;
@@ -55,8 +55,6 @@ class _UsuarioFormPageState extends State<UsuarioFormPage> {
     super.dispose();
   }
 
-  void _erro(String msg) => ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg)));
-
   Future<void> _salvar() async {
     final nome = nomeCtrl.text.trim();
     final email = emailCtrl.text.trim();
@@ -64,10 +62,30 @@ class _UsuarioFormPageState extends State<UsuarioFormPage> {
     final telefone = telefoneCtrl.text.trim();
     final apelido = apelidoCtrl.text.trim();
 
-    if (nome.isEmpty) { _erro('Preencha o nome'); return; }
-    if (email.isEmpty || !email.contains('@') || !email.contains('.')) { _erro('Email inválido'); return; }
-    if (curso == null || curso!.isEmpty) { _erro('Selecione o curso'); return; }
-    if (tipoUsuario == null || tipoUsuario!.isEmpty) { _erro('Selecione o tipo de usuário'); return; }
+    if (nome.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Preencha o nome')),
+      );
+      return;
+    }
+    if (email.isEmpty || !email.contains('@') || !email.contains('.')) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Email inválido')),
+      );
+      return;
+    }
+    if (curso == null || curso!.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Selecione o curso')),
+      );
+      return;
+    }
+    if (tipoUsuario == null || tipoUsuario!.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Selecione o tipo de usuário')),
+      );
+      return;
+    }
 
     setState(() => salvando = true);
     try {
@@ -86,10 +104,14 @@ class _UsuarioFormPageState extends State<UsuarioFormPage> {
 
       await _service.salvarUsuario(usuario);
 
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Usuário salvo com sucesso')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Usuário salvo com sucesso!')),
+      );
       Navigator.pop(context);
     } catch (e) {
-      _erro('Erro ao salvar usuário: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Erro ao salvar usuário.')),
+      );
     } finally {
       setState(() => salvando = false);
     }
@@ -97,30 +119,121 @@ class _UsuarioFormPageState extends State<UsuarioFormPage> {
 
   @override
   Widget build(BuildContext context) {
-    final titulo = widget.usuario == null ? 'Novo Usuário' : 'Editar Usuário';
+    final isEdicao = widget.usuario != null;
+
     return Scaffold(
-      appBar: AppBar(title: Text(titulo)),
-      body: ListView(
-        padding: const EdgeInsets.all(16),
-        children: [
-          CampoTexto(label: 'Nome', controller: nomeCtrl),
-          const SizedBox(height: 8),
-          CampoTexto(label: 'Email', controller: emailCtrl),
-          const SizedBox(height: 8),
-          CampoTexto(label: 'Data de nascimento', controller: dataCtrl),
-          const SizedBox(height: 8),
-          CampoTexto(label: 'Telefone', controller: telefoneCtrl),
-          const SizedBox(height: 8),
-          CampoTexto(label: 'Apelido de calouro', controller: apelidoCtrl),
-          const SizedBox(height: 8),
-          CampoDropdown(label: 'Curso', valor: curso, itens: cursos, aoMudar: (v) => setState(() => curso = v)),
-          const SizedBox(height: 8),
-          CampoDropdown(label: 'Tipo de usuário', valor: tipoUsuario, itens: tipos, aoMudar: (v) => setState(() => tipoUsuario = v)),
-          const SizedBox(height: 16),
-          ElevatedButton(
-            onPressed: salvando ? null : _salvar,
-            child: salvando ? const CircularProgressIndicator(color: Colors.white) : const Text('Salvar'),
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        foregroundColor: const Color(0xFF0E2877),
+        elevation: 0,
+        centerTitle: true,
+        title: Text(
+          isEdicao ? 'Editar Usuário' : 'Novo Usuário',
+          style: const TextStyle(
+            fontSize: 22,
+            fontWeight: FontWeight.bold,
+            color: Color(0xFF0E2877),
           ),
+        ),
+      ),
+      body: Stack(
+        children: [
+          Positioned(
+            bottom: 0,
+            left: 0,
+            child: Opacity(
+              opacity: 0.13,
+              child: Image.asset(
+                'assets/imgs/mascote.png',
+                width: 220,
+                fit: BoxFit.contain,
+              ),
+            ),
+          ),
+          SafeArea(
+            child: Column(
+              children: [
+                const SizedBox(height: 8),
+                Center(
+                  child: Image.asset(
+                    "assets/imgs/logo.png",
+                    height: 70,
+                  ),
+                ),
+                const SizedBox(height: 10),
+                Text(
+                  isEdicao ? 'Editar Usuário' : 'Novo Usuário',
+                  style: const TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 10),
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: ListView(
+                      children: [
+                        CampoTexto(
+                          controller: nomeCtrl,
+                          label: "Nome",
+                          hint: "Digite o nome completo",
+                          emojiFinal: const Icon(Icons.person, color: Color(0xFF0E2877)),
+                        ),
+                        CampoTexto(
+                          controller: emailCtrl,
+                          label: "Email",
+                          hint: "Digite o email",
+                          emojiFinal: const Icon(Icons.email, color: Color(0xFF0E2877)),
+                        ),
+                        CampoTexto(
+                          controller: dataCtrl,
+                          label: "Data de Nascimento",
+                          hint: "Digite a data de nascimento",
+                          emojiFinal: const Icon(Icons.calendar_today, color: Color(0xFF0E2877)),
+                        ),
+                        CampoTexto(
+                          controller: telefoneCtrl,
+                          label: "Telefone",
+                          hint: "Digite o telefone",
+                          emojiFinal: const Icon(Icons.phone, color: Color(0xFF0E2877)),
+                        ),
+                        CampoTexto(
+                          controller: apelidoCtrl,
+                          label: "Apelido de Calouro",
+                          hint: "Digite o apelido",
+                          emojiFinal: const Icon(Icons.emoji_emotions, color: Color(0xFF0E2877)),
+                        ),
+                        CampoDropdown(
+                          label: "Curso",
+                          valor: curso,
+                          itens: cursos,
+                          aoMudar: (v) => setState(() => curso = v),
+                        ),
+                        CampoDropdown(
+                          label: "Tipo de Usuário",
+                          valor: tipoUsuario,
+                          itens: tipos,
+                          aoMudar: (v) => setState(() => tipoUsuario = v),
+                        ),
+                        const SizedBox(height: 20),
+                        BotaoPadrao(
+                          texto: "Salvar",
+                          icone: Icons.save,
+                          cor: const Color(0xFF0E2877),
+                          raioBorda: 20,
+                          tamanhoFonte: 18,
+                          onPressed: ()=>salvando ? null : _salvar,
+               
+                        ),
+                        const SizedBox(height: 30),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          )
         ],
       ),
     );

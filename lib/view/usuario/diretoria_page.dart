@@ -75,7 +75,6 @@ class _DiretoriaPageState extends State<DiretoriaPage> {
                             child: CardItem(
                               titulo: m.nome,
                               descricao: "${m.cargo}\nCurso: ${m.curso}",
-                              imagem: "assets/imgs/img4.png",
                               opacidade: 0.70,
                               corFundo: index % 2 == 0
                                   ? const Color(0xFF0E2877)

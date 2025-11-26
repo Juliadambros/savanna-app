@@ -73,7 +73,7 @@ class _ProdutosPageState extends State<ProdutosPage> {
                             child: CardItem(
                               titulo: p.nome,
                               descricao: p.descricao,
-                              imagem: "assets/imgs/img3.png",
+                       
                               opacidade: 0.70,
                               corFundo: index % 2 == 0
                                   ? const Color(0xFF0E2877)

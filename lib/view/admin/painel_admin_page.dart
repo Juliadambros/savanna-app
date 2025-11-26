@@ -8,6 +8,7 @@ import 'package:integrador/view/admin/produto/adm_produtos.dart';
 import 'package:integrador/view/admin/usuario/adm_usuario.dart';
 import 'package:integrador/view/admin/sobre_nos/adm_sobre_nos.dart';
 import 'package:integrador/view/login/login_page.dart';
+import '../../components/botao_padrao.dart';
 
 class PainelAdminPage extends StatelessWidget {
   const PainelAdminPage({super.key});
@@ -16,7 +17,7 @@ class PainelAdminPage extends StatelessWidget {
     await AuthService().sair();
     Navigator.pushAndRemoveUntil(
       context,
-      MaterialPageRoute(builder: (_) => const LoginPage(tipo: 'adm')),
+      MaterialPageRoute(builder: (_) => const LoginPage(tipo: 'administrador')),
       (route) => false,
     );
   }
@@ -24,11 +25,18 @@ class PainelAdminPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xfff2f2f7),
       appBar: AppBar(
-        title: const Text('Painel Administrativo'),
+        backgroundColor: const Color(0xfff2f2f7),
+        elevation: 0,
+        title: const Text(
+          'Painel Administrativo',
+          style: TextStyle(color: Colors.black),
+        ),
+        iconTheme: const IconThemeData(color: Colors.black),
         actions: [
           PopupMenuButton<String>(
-            icon: const Icon(Icons.person),
+            icon: const Icon(Icons.person, color: Colors.black),
             onSelected: (value) {
               if (value == 'logout') {
                 _logout(context);
@@ -43,53 +51,106 @@ class PainelAdminPage extends StatelessWidget {
           ),
         ],
       ),
-      body: Padding(
+
+      body: ListView(
         padding: const EdgeInsets.all(16),
-        child: ListView(
-          children: [
-            ElevatedButton.icon(
-              icon: const Icon(Icons.shopping_bag),
-              label: const Text('Gerenciar Produtos'),
-              onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const AdmProdutosPage())),
+        physics: const BouncingScrollPhysics(),
+        children: [
+          const SizedBox(height: 10),
+
+          // LOGO NO TOPO
+          Center(
+            child: Image.asset(
+              "assets/imgs/logo.png",
+              height: 120,
             ),
-            const SizedBox(height: 12),
-            ElevatedButton.icon(
-              icon: const Icon(Icons.event),
-              label: const Text('Gerenciar Eventos'),
-              onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const AdmEventosPage())),
-            ),
-            const SizedBox(height: 12),
-            ElevatedButton.icon(
-              icon: const Icon(Icons.people),
-              label: const Text('Gerenciar Usuários'),
-              onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const UsuariosAdminPage())),
-            ),
-            const SizedBox(height: 12),
-            ElevatedButton.icon(
-              icon: const Icon(Icons.how_to_reg),
-              label: const Text('Gerenciar Associações'),
-              onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const AdmAssociacoesPage())),
-            ),
-            const SizedBox(height: 12),
-            ElevatedButton.icon(
-              icon: const Icon(Icons.group),
-              label: const Text('Gerenciar Diretoria'),
-              onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const AdmDiretoriaPage())),
-            ),
-            const SizedBox(height: 12),
-            ElevatedButton.icon(
-              icon: const Icon(Icons.handshake),
-              label: const Text('Gerenciar Parcerias'),
-              onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const AdmParceriasPage())),
-            ),
-            const SizedBox(height: 12),
-            ElevatedButton.icon(
-              icon: const Icon(Icons.info),
-              label: const Text('Gerenciar Sobre Nós'),
-              onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const AdmSobreNosPage())),
-            ),
-          ],
-        ),
+          ),
+
+          const SizedBox(height: 30),
+
+          BotaoPadrao(
+            texto: "Gerenciar Produtos",
+            icone: Icons.shopping_bag,
+            onPressed: () => Navigator.push(context,
+              MaterialPageRoute(builder: (_) => const AdmProdutosPage())),
+            cor: const Color(0xffE96120),
+            transparencia: 0.9,
+            altura: 55,
+            raioBorda: 16,
+          ),
+          const SizedBox(height: 12),
+
+          BotaoPadrao(
+            texto: "Gerenciar Eventos",
+            icone: Icons.event,
+            onPressed: () => Navigator.push(context,
+              MaterialPageRoute(builder: (_) => const AdmEventosPage())),
+            cor: const Color(0xffE96120),
+            transparencia: 0.9,
+            altura: 55,
+            raioBorda: 16,
+          ),
+          const SizedBox(height: 12),
+
+          BotaoPadrao(
+            texto: "Gerenciar Usuários",
+            icone: Icons.people,
+            onPressed: () => Navigator.push(context,
+              MaterialPageRoute(builder: (_) => const UsuariosAdminPage())),
+            cor: const Color(0xffE96120),
+            transparencia: 0.9,
+            altura: 55,
+            raioBorda: 16,
+          ),
+          const SizedBox(height: 12),
+
+          BotaoPadrao(
+            texto: "Gerenciar Associações",
+            icone: Icons.how_to_reg,
+            onPressed: () => Navigator.push(context,
+              MaterialPageRoute(builder: (_) => const AdmAssociacoesPage())),
+            cor: const Color(0xffE96120),
+            transparencia: 0.9,
+            altura: 55,
+            raioBorda: 16,
+          ),
+          const SizedBox(height: 12),
+
+          BotaoPadrao(
+            texto: "Gerenciar Diretoria",
+            icone: Icons.group,
+            onPressed: () => Navigator.push(context,
+              MaterialPageRoute(builder: (_) => const AdmDiretoriaPage())),
+            cor: const Color(0xffE96120),
+            transparencia: 0.9,
+            altura: 55,
+            raioBorda: 16,
+          ),
+          const SizedBox(height: 12),
+
+          BotaoPadrao(
+            texto: "Gerenciar Parcerias",
+            icone: Icons.handshake,
+            onPressed: () => Navigator.push(context,
+              MaterialPageRoute(builder: (_) => const AdmParceriasPage())),
+            cor: const Color(0xffE96120),
+            transparencia: 0.9,
+            altura: 55,
+            raioBorda: 16,
+          ),
+          const SizedBox(height: 12),
+
+          BotaoPadrao(
+            texto: "Gerenciar Sobre Nós",
+            icone: Icons.info,
+            onPressed: () => Navigator.push(context,
+              MaterialPageRoute(builder: (_) => const AdmSobreNosPage())),
+            cor: const Color(0xffE96120),
+            transparencia: 0.9,
+            altura: 55,
+            raioBorda: 16,
+          ),
+        ],
       ),
     );
   }

@@ -90,57 +90,75 @@ class _LoginPageState extends State<LoginPage> {
         ),
       ),
       body: Stack(
-        children: [
-          Positioned(
-            left: 0,
-            bottom: 0,
-            child: Image.asset("assets/imgs/mascote.png", fit: BoxFit.contain),
-          ),
+  children: [
+    Positioned(
+      left: 0,
+      bottom: 0,
+      child: Image.asset("assets/imgs/mascote.png", fit: BoxFit.contain),
+    ),
 
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Column(
-              children: [
-                const SizedBox(height: 60),
+    SafeArea(
+      child: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Column(
+            children: [
+              const SizedBox(height: 60),
 
-                Image.asset("assets/imgs/logo.png"),
-                const SizedBox(height: 50),
+              Image.asset("assets/imgs/logo.png"),
+              const SizedBox(height: 50),
 
-                CampoTexto(label: 'Email', controller: emailController),
-                const SizedBox(height: 10),
+              CampoTexto(label: 'Email', controller: emailController),
+              const SizedBox(height: 10),
 
-                CampoTexto(
-                  controller: senhaController,
-                  label: "Senha",
-                  senha: true,
-                  emojiFinal: const Icon(
-                    Icons.lock_outline,
-                    color: Color(0xFF0E2877),
+              CampoTexto(
+                controller: senhaController,
+                label: "Senha",
+                senha: true,
+                emojiFinal: const Icon(
+                  Icons.lock_outline,
+                  color: Color(0xFF0E2877),
+                ),
+              ),
+
+              Align(
+                alignment: Alignment.centerRight,
+                child: TextButton(
+                  onPressed: () {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Funcionalidade ainda não implementada'),
+                      ),
+                    );
+                  },
+                  child: const Text(
+                    'Esqueceu sua senha?',
+                    style: TextStyle(color: Color(0xFF0E2877)),
                   ),
                 ),
+              ),
 
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: TextButton(
-                    onPressed: () {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Funcionalidade ainda não implementada'),
-                        ),
-                      );
-                    },
-                    child: const Text(
-                      'Esqueceu sua senha?',
-                      style: TextStyle(color: Color(0xFF0E2877)),
-                    ),
-                  ),
-                ),
+              const SizedBox(height: 20),
 
-                const SizedBox(height: 20),
+              BotaoPadrao(
+                texto: carregando ? "Entrando..." : "Entrar",
+                onPressed: carregando ? () {} : _entrar,
+                cor: const Color(0xffE96120),
+                transparencia: 0.8,
+                tamanhoFonte: 12,
+                altura: 40,
+                largura: 200,
+                raioBorda: 20,
+              ),
 
+              if (!isAdmin) ...[
+                const SizedBox(height: 16),
                 BotaoPadrao(
-                  texto: carregando ? "Entrando..." : "Entrar",
-                  onPressed: carregando ? () {} : _entrar,
+                  texto: "Criar conta",
+                  onPressed: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const CadastroPage()),
+                  ),
                   cor: const Color(0xffE96120),
                   transparencia: 0.8,
                   tamanhoFonte: 12,
@@ -148,30 +166,17 @@ class _LoginPageState extends State<LoginPage> {
                   largura: 200,
                   raioBorda: 20,
                 ),
-
-                if (!isAdmin) ...[
-                  const SizedBox(height: 16),
-                  BotaoPadrao(
-                    texto: "Criar conta",
-                    onPressed: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (_) => const CadastroPage()),
-                    ),
-                    cor: const Color(0xffE96120),
-                    transparencia: 0.8,
-                    tamanhoFonte: 12,
-                    altura: 40,
-                    largura: 200,
-                    raioBorda: 20,
-                  ),
-                ],
-
-                const Spacer(),
               ],
-            ),
+
+              const SizedBox(height: 40),
+            ],
           ),
-        ],
+        ),
       ),
+    ),
+  ],
+),
+
     );
   }
 }

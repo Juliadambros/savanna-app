@@ -38,12 +38,10 @@ class HomePage extends StatelessWidget {
       {
         "titulo": "Promoção Savanna",
         "descricao": "Aproveite 20% OFF nos produtos da atlética!",
-        "imagem": "assets/imgs/img1.png",
       },
       {
         "titulo": "Eventos da Semana",
         "descricao": "Confira tudo o que vai rolar essa semana!",
-        "imagem": "assets/imgs/img2.png",
       },
     ];
 
@@ -189,7 +187,6 @@ class HomePage extends StatelessWidget {
                   CardItem(
                     titulo: cardsFirebase[i]["titulo"],
                     descricao: cardsFirebase[i]["descricao"],
-                    imagem: cardsFirebase[i]["imagem"],
                     corFundo: i % 2 == 0
                         ? const Color(0xFF0E2877)
                         : const Color(0xFFE96120),
