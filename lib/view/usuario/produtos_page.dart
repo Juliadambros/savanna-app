@@ -13,6 +13,7 @@ class ProdutosPage extends StatefulWidget {
 class _ProdutosPageState extends State<ProdutosPage> {
   final service = ProdutoService();
   List<ProdutoModel> produtos = [];
+  bool _carregando = true;
 
   @override
   void initState() {
@@ -21,8 +22,14 @@ class _ProdutosPageState extends State<ProdutosPage> {
   }
 
   Future<void> carregarProdutos() async {
-    final lista = await service.listar();
-    setState(() => produtos = lista);
+    try {
+      final lista = await service.listar();
+      final produtosDisponiveis = lista.where((p) => p.disponivel).toList();
+      setState(() => produtos = produtosDisponiveis);
+    } catch (e) {
+    } finally {
+      setState(() => _carregando = false);
+    }
   }
 
   @override
@@ -55,33 +62,34 @@ class _ProdutosPageState extends State<ProdutosPage> {
               ),
 
               Expanded(
-                child: produtos.isEmpty
-                    ? const Center(
-                        child: Text(
-                          'Nenhum produto disponível.',
-                          style: TextStyle(fontSize: 16),
-                        ),
-                      )
-                    : ListView.builder(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        itemCount: produtos.length,
-                        itemBuilder: (context, index) {
-                          final p = produtos[index];
-
-                          return Padding(
-                            padding: const EdgeInsets.only(bottom: 10.0),
-                            child: CardItem(
-                              titulo: p.nome,
-                              descricao: p.descricao,
-                       
-                              opacidade: 0.70,
-                              corFundo: index % 2 == 0
-                                  ? const Color(0xFF0E2877)
-                                  : const Color(0xFFE96120),
+                child: _carregando
+                    ? const Center(child: CircularProgressIndicator())
+                    : produtos.isEmpty
+                        ? const Center(
+                            child: Text(
+                              'Nenhum produto disponível.',
+                              style: TextStyle(fontSize: 16),
                             ),
-                          );
-                        },
-                      ),
+                          )
+                        : ListView.builder(
+                            padding: const EdgeInsets.symmetric(horizontal: 16),
+                            itemCount: produtos.length,
+                            itemBuilder: (context, index) {
+                              final p = produtos[index];
+
+                              return Padding(
+                                padding: const EdgeInsets.only(bottom: 10.0),
+                                child: CardItem(
+                                  titulo: p.nome,
+                                  descricao: "${p.descricao}\nPreço: R\$ ${p.preco.toStringAsFixed(2)}",
+                                  opacidade: 0.70,
+                                  corFundo: index % 2 == 0
+                                      ? const Color(0xFF0E2877)
+                                      : const Color(0xFFE96120),
+                                ),
+                              );
+                            },
+                          ),
               ),
             ],
           ),
