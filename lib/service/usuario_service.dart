@@ -7,6 +7,7 @@ class UsuarioService {
 
   Future<void> salvarUsuario(UsuarioModel usuario) async {
     await usuarios.doc(usuario.uid).set(usuario.toMap());
+    
   }
 
   Future<UsuarioModel?> buscarUsuario(String uid) async {
@@ -21,5 +22,6 @@ class UsuarioService {
         .map((d) => UsuarioModel.fromMap(d.data() as Map<String, dynamic>))
         .toList();
   }
-}
 
+
+}

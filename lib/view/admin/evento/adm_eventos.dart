@@ -26,9 +26,39 @@ class _AdmEventosPageState extends State<AdmEventosPage> {
   }
 
   Future<void> _remover(String id) async {
+  final confirmacao = await showDialog<bool>(
+    context: context,
+    builder: (context) => AlertDialog(
+      title: const Text('Confirmar exclusão'),
+      content: const Text('Tem certeza que deseja excluir este evento?'),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(false),
+          child: const Text('Cancelar'),
+        ),
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(true),
+          style: TextButton.styleFrom(
+            foregroundColor: Colors.red,
+          ),
+          child: const Text('Excluir'),
+        ),
+      ],
+    ),
+  );
+
+  if (confirmacao == true) {
     await _service.deletar(id);
     _carregarEventos();
+    
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Evento excluído com sucesso!'),
+        backgroundColor: Colors.green,
+      ),
+    );
   }
+}
 
   void _abrirFormulario({EventoModel? evento}) async {
     await Navigator.push(

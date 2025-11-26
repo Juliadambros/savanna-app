@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:integrador/service/usuario_service.dart';
 import '../../models/usuario_model.dart';
+import 'package:integrador/view/admin/usuario/form_usuario.dart'; 
 
 class PerfilPage extends StatelessWidget {
   const PerfilPage({super.key});
@@ -26,7 +27,6 @@ class PerfilPage extends StatelessWidget {
 
       body: Stack(
         children: [
-          // ---- Mascote no fundo ----
           Positioned.fill(
             child: Opacity(
               opacity: 0.30,
@@ -70,22 +70,28 @@ class PerfilPage extends StatelessWidget {
                       _infoCard(user.email),
 
                       _infoCard("Apelido: ${user.apelidoCalouro}"),
+                      
+                      _infoCard("Curso: ${user.curso}"),
+                      
+                      _infoCard("Telefone: ${_formatarTelefone(user.telefone)}"),
 
                       const SizedBox(height: 20),
-
-                      Text(
-                        user.associado ? "Associado ✔️" : "Não Associado ❌",
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: user.associado ? Colors.green : Colors.red,
-                        ),
-                      ),
 
                       const SizedBox(height: 30),
 
                       ElevatedButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => UsuarioFormPage(
+                                usuario: user,
+                                isEdicaoPerfil: true, // Adicionado este parâmetro
+                              ),
+                            ),
+                          ).then((_) {
+                          });
+                        },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.orange,
                           padding: const EdgeInsets.symmetric(
@@ -115,31 +121,43 @@ class PerfilPage extends StatelessWidget {
     );
   }
 
+  String _formatarTelefone(String telefone) {
+    if (telefone.isEmpty) return '---';
+    
+    if (telefone.contains('(')) return telefone;
+    
+    if (telefone.length == 10) {
+      return '(${telefone.substring(0, 2)}) ${telefone.substring(2, 6)}-${telefone.substring(6)}';
+    } else if (telefone.length == 11) {
+      return '(${telefone.substring(0, 2)}) ${telefone.substring(2, 7)}-${telefone.substring(7)}';
+    }
+    
+    return telefone;
+  }
 
- Widget _infoCard(String text) {
-  return Container(
-    width: double.infinity,
-    height: 38, 
-    margin: const EdgeInsets.only(bottom: 14),
-    padding: const EdgeInsets.symmetric(horizontal: 20),
-    alignment: Alignment.center,
-    decoration: BoxDecoration(
-      color: Colors.white.withOpacity(0.85),
-      borderRadius: BorderRadius.circular(30),
-      border: Border.all(
-        color: Color(0xFF3E4A88),
-        width: 1.6,
+  Widget _infoCard(String text) {
+    return Container(
+      width: double.infinity,
+      height: 38, 
+      margin: const EdgeInsets.only(bottom: 14),
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      alignment: Alignment.center,
+      decoration: BoxDecoration(
+        color: Colors.white.withOpacity(0.85),
+        borderRadius: BorderRadius.circular(30),
+        border: Border.all(
+          color: const Color(0xFF3E4A88),
+          width: 1.6,
+        ),
       ),
-    ),
-    child: Text(
-      text,
-      textAlign: TextAlign.center,
-      style: const TextStyle(
-        fontSize: 15,
-        fontWeight: FontWeight.w500,
+      child: Text(
+        text,
+        textAlign: TextAlign.center,
+        style: const TextStyle(
+          fontSize: 15,
+          fontWeight: FontWeight.w500,
+        ),
       ),
-    ),
-  );
-}
-
+    );
+  }
 }

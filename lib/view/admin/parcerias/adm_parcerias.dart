@@ -13,6 +13,8 @@ class AdmParceriasPage extends StatefulWidget {
 class _AdmParceriasPageState extends State<AdmParceriasPage> {
   final ParceiroService _service = ParceiroService();
   List<ParceiroModel> _parceiros = [];
+  bool _carregando = true;
+  String? _erro;
 
   @override
   void initState() {
@@ -21,13 +23,55 @@ class _AdmParceriasPageState extends State<AdmParceriasPage> {
   }
 
   Future<void> _carregar() async {
-    final lista = await _service.listar();
-    setState(() => _parceiros = lista);
+    setState(() {
+      _carregando = true;
+      _erro = null;
+    });
+    try {
+      final lista = await _service.listar();
+      setState(() => _parceiros = lista);
+    } catch (e) {
+      setState(() => _erro = 'Erro ao carregar parcerias.');
+    } finally {
+      setState(() => _carregando = false);
+    }
   }
 
-  Future<void> _remover(String id) async {
-    await _service.deletar(id);
-    _carregar();
+  Future<void> _remover(String id, String nome) async {
+    final confirmacao = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Confirmar exclusão'),
+        content: Text('Tem certeza que deseja excluir a parceria "$nome"?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: const Text('Cancelar'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            style: TextButton.styleFrom(
+              foregroundColor: Colors.red,
+            ),
+            child: const Text('Excluir'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmacao == true) {
+      try {
+        await _service.deletar(id);
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Parceria removida com sucesso!')),
+        );
+        _carregar();
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Erro ao remover parceria.')),
+        );
+      }
+    }
   }
 
   void _abrirForm({ParceiroModel? parceiro}) async {
@@ -87,52 +131,56 @@ class _AdmParceriasPageState extends State<AdmParceriasPage> {
           // Conteúdo
           Padding(
             padding: const EdgeInsets.only(top: 180),
-            child: _parceiros.isEmpty
-                ? const Center(
-                    child: Text(
-                      'Nenhuma parceria cadastrada.',
-                      style: TextStyle(fontSize: 18),
-                    ),
-                  )
-                : ListView.builder(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 12,
-                    ),
-                    itemCount: _parceiros.length,
-                    itemBuilder: (context, i) {
-                      final p = _parceiros[i];
-
-                      return Card(
-                        elevation: 4,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        margin: const EdgeInsets.only(bottom: 12),
-                        child: ListTile(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          title: Text(
-                            p.nome,
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 18,
+            child: _carregando
+                ? const Center(child: CircularProgressIndicator())
+                : _erro != null
+                    ? Center(child: Text(_erro!))
+                    : _parceiros.isEmpty
+                        ? const Center(
+                            child: Text(
+                              'Nenhuma parceria cadastrada.',
+                              style: TextStyle(fontSize: 18),
                             ),
+                          )
+                        : ListView.builder(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 12,
+                            ),
+                            itemCount: _parceiros.length,
+                            itemBuilder: (context, i) {
+                              final p = _parceiros[i];
+
+                              return Card(
+                                elevation: 4,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                margin: const EdgeInsets.only(bottom: 12),
+                                child: ListTile(
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  title: Text(
+                                    p.nome,
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 18,
+                                    ),
+                                  ),
+                                  subtitle: Text(
+                                    '${p.descricao}\nContato: ${p.contato}',
+                                  ),
+                                  isThreeLine: true,
+                                  trailing: IconButton(
+                                    icon: const Icon(Icons.delete, color: Colors.red),
+                                    onPressed: () => _remover(p.id!, p.nome),
+                                  ),
+                                  onTap: () => _abrirForm(parceiro: p),
+                                ),
+                              );
+                            },
                           ),
-                          subtitle: Text(
-                            '${p.descricao}\nContato: ${p.contato}',
-                          ),
-                          isThreeLine: true,
-                          trailing: IconButton(
-                            icon: const Icon(Icons.delete, color: Colors.red),
-                            onPressed: () => _remover(p.id!),
-                          ),
-                          onTap: () => _abrirForm(parceiro: p),
-                        ),
-                      );
-                    },
-                  ),
           ),
         ],
       ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:integrador/components/mask_formatter.dart';
 import 'package:integrador/service/auth_service.dart';
 import 'package:integrador/service/usuario_service.dart';
 import 'package:integrador/components/campo_dropdown.dart';
@@ -7,6 +8,7 @@ import 'home_page.dart';
 import '../../components/campo_texto.dart';
 import 'escolha_tipo_usuario_page.dart';
 import '../../components/botao_padrao.dart';
+
 
 class CadastroPage extends StatefulWidget {
   const CadastroPage({super.key});
@@ -25,6 +27,8 @@ class _CadastroPageState extends State<CadastroPage> {
   String? curso;
   bool carregando = false;
 
+  final phoneMask = PhoneMaskTextInputFormatter();
+
   final cursos = [
     'Ciência da Computação',
     'Química',
@@ -34,10 +38,66 @@ class _CadastroPageState extends State<CadastroPage> {
     "Matematica Computacional"
   ];
 
+  Future<void> _selecionarData() async {
+    final DateTime? dataSelecionada = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(1900),
+      lastDate: DateTime.now(),
+      builder: (context, child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: const ColorScheme.light(
+              primary: Color(0xFF0E2877),
+              onPrimary: Colors.white,
+              onSurface: Color(0xFF0E2877),
+            ),
+            textButtonTheme: TextButtonThemeData(
+              style: TextButton.styleFrom(
+                foregroundColor: Color(0xFF0E2877),
+              ),
+            ),
+          ),
+          child: child!,
+        );
+      },
+    );
+
+    if (dataSelecionada != null) {
+      final formatada = '${dataSelecionada.day.toString().padLeft(2, '0')}/${dataSelecionada.month.toString().padLeft(2, '0')}/${dataSelecionada.year}';
+      data.text = formatada;
+    }
+  }
+
+  String? _validarCampos() {
+    if (nome.text.isEmpty) return 'Preencha o nome';
+    if (email.text.isEmpty) return 'Preencha o email';
+    if (senha.text.isEmpty) return 'Preencha a senha';
+    if (data.text.isEmpty) return 'Selecione a data de nascimento';
+    if (telefone.text.isEmpty) return 'Preencha o telefone';
+    if (apelido.text.isEmpty) return 'Preencha o apelido de calouro';
+    if (curso == null || curso!.isEmpty) return 'Selecione o curso';
+    
+    if (!email.text.contains('@') || !email.text.contains('.')) {
+      return 'Email inválido';
+    }
+    
+    if (senha.text.length < 6) {
+      return 'A senha deve ter no mínimo 6 caracteres';
+    }
+    
+    if (!validarTelefone(telefone.text)) {
+      return 'Telefone inválido. Digite um número com DDD (10 ou 11 dígitos).';
+    }
+    
+    return null;
+  }
+
   Future<void> _cadastrar() async {
-    if (nome.text.isEmpty || email.text.isEmpty || senha.text.isEmpty) {
+    final erroValidacao = _validarCampos();
+    if (erroValidacao != null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Preencha nome, email e senha')),
+        SnackBar(content: Text(erroValidacao)),
       );
       return;
     }
@@ -66,14 +126,16 @@ class _CadastroPageState extends State<CadastroPage> {
       return;
     }
 
+    final telefoneApenasNumeros = obterApenasNumerosTelefone(telefone.text);
+
     final usuario = UsuarioModel(
       uid: user.uid,
       nome: nome.text.trim(),
       email: email.text.trim(),
       dataNascimento: data.text.trim(),
-      telefone: telefone.text.trim(),
+      telefone: telefoneApenasNumeros,
       apelidoCalouro: apelido.text.trim(),
-      curso: curso ?? '',
+      curso: curso!,
       tipoUsuario: 'usuario',
     );
 
@@ -141,26 +203,76 @@ class _CadastroPageState extends State<CadastroPage> {
                   
                   const SizedBox(height: 50),
 
-                  CampoTexto(label: 'Nome', controller: nome),
+                  CampoTexto(
+                    label: 'Nome *', 
+                    controller: nome,
+                    hint: 'Digite seu nome completo',
+                  ),
                   const SizedBox(height: 12),
 
-                  CampoTexto(label: 'Email', controller: email),
+                  CampoTexto(
+                    label: 'Email *', 
+                    controller: email,
+                    hint: 'Digite seu email',
+                    tipo: TextInputType.emailAddress,
+                  ),
                   const SizedBox(height: 12),
 
-                  CampoTexto(label: 'Senha', controller: senha, senha: true),
+                  CampoTexto(
+                    label: 'Senha *', 
+                    controller: senha, 
+                    senha: true,
+                    hint: 'Mínimo 6 caracteres',
+                  ),
                   const SizedBox(height: 12),
 
-                  CampoTexto(label: 'Data de nascimento', controller: data),
+                  // Campo de data com DatePicker
+                  GestureDetector(
+                    onTap: _selecionarData,
+                    child: AbsorbPointer(
+                      child: CampoTexto(
+                        label: 'Data de nascimento *',
+                        controller: data,
+                        hint: 'Selecione a data',
+                        emojiFinal: const Icon(Icons.calendar_today, color: Color(0xFF0E2877)),
+                      ),
+                    ),
+                  ),
                   const SizedBox(height: 12),
 
-                  CampoTexto(label: 'Telefone', controller: telefone),
+                  TextField(
+                    controller: telefone,
+                    keyboardType: TextInputType.phone,
+                    inputFormatters: [phoneMask],
+                    decoration: InputDecoration(
+                      labelText: 'Telefone *',
+                      labelStyle: TextStyle(color: Color(0xFF0E2877)),
+                      hintText: '(11) 99999-9999',
+                      suffixIcon: Icon(Icons.phone, color: Color(0xFF0E2877)),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(20),
+                        borderSide: BorderSide(color: Color(0xFF0E2877), width: 2),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(20),
+                        borderSide: BorderSide(color: Color(0xFF0E2877), width: 3),
+                      ),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                    ),
+                  ),
                   const SizedBox(height: 12),
 
-                  CampoTexto(label: 'Apelido de calouro', controller: apelido),
+                  CampoTexto(
+                    label: 'Apelido de calouro *', 
+                    controller: apelido,
+                    hint: 'Digite seu apelido de calouro',
+                  ),
                   const SizedBox(height: 12),
 
                   CampoDropdown(
-                    label: 'Curso',
+                    label: 'Curso *',
                     valor: curso,
                     itens: cursos,
                     aoMudar: (v) => setState(() => curso = v),
@@ -179,6 +291,19 @@ class _CadastroPageState extends State<CadastroPage> {
                     raioBorda: 20,
                   ),
 
+                  const SizedBox(height: 20),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: Text(
+                      '* Campos obrigatórios',
+                      style: TextStyle(
+                        color: Colors.grey[600],
+                        fontSize: 12,
+                        fontStyle: FontStyle.italic,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
                   const SizedBox(height: 40),
                 ],
               ),
@@ -189,4 +314,3 @@ class _CadastroPageState extends State<CadastroPage> {
     );
   }
 }
-

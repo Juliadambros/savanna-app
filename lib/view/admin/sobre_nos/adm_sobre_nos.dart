@@ -37,26 +37,49 @@ class _AdmSobreNosPageState extends State<AdmSobreNosPage> {
     }
   }
 
+  Future<void> _remover(String id, String titulo) async {
+    final confirmacao = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Confirmar exclusão'),
+        content: Text('Tem certeza que deseja excluir "$titulo"?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: const Text('Cancelar'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            style: TextButton.styleFrom(
+              foregroundColor: Colors.red,
+            ),
+            child: const Text('Excluir'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmacao == true) {
+      try {
+        await _service.deletar(id);
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Informação removida com sucesso!')),
+        );
+        _carregar();
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Erro ao remover informação.')),
+        );
+      }
+    }
+  }
+
   void _abrirForm({SobreNosModel? pagina}) async {
     await Navigator.push(
       context,
       MaterialPageRoute(builder: (_) => FormSobreNos(pagina: pagina)),
     );
     _carregar();
-  }
-
-  Future<void> _remover(String id) async {
-    try {
-      await _service.deletar(id);
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Informação removida com sucesso!')),
-      );
-      _carregar();
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Erro ao remover informação.')),
-      );
-    }
   }
 
   @override
@@ -147,7 +170,7 @@ class _AdmSobreNosPageState extends State<AdmSobreNosPage> {
                                         ),
                                         trailing: IconButton(
                                           icon: const Icon(Icons.delete, color: Colors.red),
-                                          onPressed: () => _remover(p.id!),
+                                          onPressed: () => _remover(p.id!, p.titulo),
                                         ),
                                         onTap: () => _abrirForm(pagina: p),
                                       ),
